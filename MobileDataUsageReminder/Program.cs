@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using MobileDataUsageReminder.Services;
 using Microsoft.Extensions.Configuration;
@@ -10,8 +11,11 @@ using MobileDataUsageReminder.Components;
 using MobileDataUsageReminder.Components.Contracts;
 using MobileDataUsageReminder.Configurations;
 using MobileDataUsageReminder.Configurations.Contracts;
+using MobileDataUsageReminder.Infrastructure;
+using MobileDataUsageReminder.Infrastructure.Contracts;
 using MobileDataUsageReminder.Services.Contracts;
 using Serilog;
+using ApplicationConfiguration = MobileDataUsageReminder.Configurations.ApplicationConfiguration;
 
 namespace MobileDataUsageReminder
 {
@@ -21,7 +25,7 @@ namespace MobileDataUsageReminder
         private static IConfiguration Configuration { get; set; }
         private static IMobileDataUsageProcessor MobileDataUsageProcessor { get; set; }
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Configuration = StartUp();
 
@@ -37,7 +41,7 @@ namespace MobileDataUsageReminder
             {
                 MobileDataUsageProcessor = ServiceProvider.GetRequiredService<IMobileDataUsageProcessor>();
 
-                MobileDataUsageProcessor.ProcessMobileDataUsage();
+                await MobileDataUsageProcessor.ProcessMobileDataUsage();
             }
             catch (Exception e)
             {
@@ -67,10 +71,15 @@ namespace MobileDataUsageReminder
 
         static void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<MobileDataConfiguration>(Configuration.GetSection(nameof(MobileDataConfiguration)))
-                    .AddSingleton<IMobileDataConfiguration>(sp => sp.GetRequiredService<IOptions<MobileDataConfiguration>>().Value)
+            services.Configure<ApplicationConfiguration>(Configuration.GetSection(nameof(ApplicationConfiguration)))
+                    .AddSingleton<IApplicationConfiguration>(sp => sp.GetRequiredService<IOptions<ApplicationConfiguration>>().Value)
+                    .Configure<TelegramConfiguration>(Configuration.GetSection(nameof(TelegramConfiguration)))
+                    .AddSingleton<ITelegramConfiguration>(sp => sp.GetRequiredService<IOptions<TelegramConfiguration>>().Value)
                     .AddScoped<IMobileDataUsageProcessor, MobileDataUsageProcessor>()
-                    .AddScoped<IProviderDataUsage, OrangeDataUsage>();
+                    .AddScoped<IProviderDataUsage, OrangeDataUsage>()
+                    .AddScoped<IPreviousRemindersService, PreviousRemindersService>()
+                    .AddScoped<IReminderGateway, TelegramGateway>()
+                    .AddScoped<IReminderService, ReminderService>();
         }
     }
 }

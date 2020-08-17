@@ -1,7 +1,9 @@
-﻿namespace MobileDataUsageReminder.Components.Contracts
+﻿using System.Threading.Tasks;
+
+namespace MobileDataUsageReminder.Components.Contracts
 {
     public interface IMobileDataUsageProcessor
     {
-        void ProcessMobileDataUsage();
+        Task ProcessMobileDataUsage();
     }
 }

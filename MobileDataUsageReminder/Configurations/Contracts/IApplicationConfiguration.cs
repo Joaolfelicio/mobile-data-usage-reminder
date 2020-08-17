@@ -1,6 +1,6 @@
 ﻿namespace MobileDataUsageReminder.Configurations.Contracts
 {
-    public interface IMobileDataConfiguration
+    public interface IApplicationConfiguration
     {
         string Test { get; }
         string ProviderEmail { get; }
