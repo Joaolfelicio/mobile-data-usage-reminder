@@ -1,12 +1,19 @@
 ﻿using MobileDataUsageReminder.Components.Contracts;
+using MobileDataUsageReminder.Services.Contracts;
 
 namespace MobileDataUsageReminder.Components
 {
     public class MobileDataUsageProcessor : IMobileDataUsageProcessor
     {
+        private readonly IProviderDataUsage _providerDataUsage;
+
+        public MobileDataUsageProcessor(IProviderDataUsage providerDataUsage)
+        {
+            _providerDataUsage = providerDataUsage;
+        }
         public void ProcessMobileDataUsage()
         {
-            throw new System.NotImplementedException();
+            var mobileDataUsages = _providerDataUsage.GetMobileDataUsage();
         }
     }
 }

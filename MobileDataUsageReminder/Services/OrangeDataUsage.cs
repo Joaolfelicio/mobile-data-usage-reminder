@@ -24,7 +24,9 @@ namespace MobileDataUsageReminder.Services
         {
             var authDriver = LoginWebDriver();
 
-            return GetDataUsages(authDriver);
+            var dataUsages = GetDataUsages(authDriver);
+
+            return dataUsages;
         }
 
         private IWebDriver LoginWebDriver()
@@ -57,7 +59,7 @@ namespace MobileDataUsageReminder.Services
                 var package = plan.FindElement(By.CssSelector("h2.pageSubTitle div")).Text;
                 var dataUsedPercentage = plan.FindElement(By.XPath("//*[@id=\"c\"]/csc-dashboard/div/div[6]/csc-dashboard-postpaid/div/div/div[1]/csc-dashboard-postpaid-mobile/div[2]/dashboard-card/usage-consumption/div[1]/div/div[1]")).GetCssValue("width").ToString();
                 var dataUserPercentageStr = double.Parse(dataUsedPercentage.Substring(0, dataUsedPercentage.Length - 2));
-                var montlyDataGb = int.Parse(plan
+                var monthlyDataGb = int.Parse(plan
                     .FindElement(By.XPath("//*[@id=\"c\"]/csc-dashboard/div/div[6]/csc-dashboard-postpaid/div/div/div[1]/csc-dashboard-postpaid-mobile/div[2]/dashboard-card/usage-consumption/div[1]/div/div[5]"))
                     .Text
                     .Split(" ")[0]);
@@ -71,7 +73,7 @@ namespace MobileDataUsageReminder.Services
                     PhoneNumber = phoneNumber,
                     Package = package,
                     DataUsedPercentage = Convert.ToInt32(Math.Round(dataUserPercentageStr / 10.0) * 10),
-                    MonthlyDataGb = montlyDataGb
+                    MonthlyDataGb = monthlyDataGb
                 });
             }
 

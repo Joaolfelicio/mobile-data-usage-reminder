@@ -422,3 +422,4 @@ $RECYCLE.BIN/
 # End of https://www.gitignore.io/api/react,csharp,windows,dotnetcore,visualstudiocode
 /MobileDataUsageReminder/chromedriver.exe
 /MobileDataUsageReminder/MobileDataUsageReminder/chromedriver.exe
+/MobileDataUsageReminder/appsettings.Development.json
