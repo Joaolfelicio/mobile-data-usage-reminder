@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using MobileDataUsageReminder.Configurations.Contracts;
 using MobileDataUsageReminder.Models;
 using MobileDataUsageReminder.Services.Contracts;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 
 namespace MobileDataUsageReminder.Services
@@ -50,11 +52,11 @@ namespace MobileDataUsageReminder.Services
         {
             var dataUsages = new List<DataUsage>();
 
-            //Get to bottom of page so it's loads everything
-            IJavaScriptExecutor js = (IJavaScriptExecutor)authDriver;
-            js.ExecuteScript("window.scrollTo(0, document.body.scrollHeight)");
-
-            Thread.Sleep(3000);
+            //Smoothly scroll to bottom to load everything
+            for (int i = 0; i < 6000; i++)
+            {
+                ((IJavaScriptExecutor)authDriver).ExecuteScript("window.scrollBy(0,2)", "");
+            }
 
             var plans = authDriver.FindElements(By.CssSelector(".box-subscription > .container"));
 
@@ -64,11 +66,12 @@ namespace MobileDataUsageReminder.Services
                 if (!plan.FindElement(By.CssSelector("h2.pageSubTitle")).Text.Contains("Device Advantage")) continue;
 
                 var phoneNumber = plan.FindElement(By.CssSelector("h2.pageSubTitle span")).Text.Substring(3);
-                var package = plan.FindElement(By.CssSelector("h2.pageSubTitle div")).Text;
-                var dataUsedPercentage = plan.FindElement(By.XPath("//*[@id=\"c\"]/csc-dashboard/div/div[6]/csc-dashboard-postpaid/div/div/div[1]/csc-dashboard-postpaid-mobile/div[2]/dashboard-card/usage-consumption/div[1]/div/div[1]")).GetCssValue("width").ToString();
-                var dataUserPercentageStr = double.Parse(dataUsedPercentage.Substring(0, dataUsedPercentage.Length - 2));
+                var dataUsedPercentage = 100 - int.Parse(Regex.Match(plan.FindElement(By.CssSelector(".chart-bar")).GetAttribute("style"), @"\d+\.*\d*").Value);
+                dataUsedPercentage = dataUsedPercentage == 0 ? 1 : dataUsedPercentage;
+
+                //Fix this to css selectors
                 var monthlyDataGb = int.Parse(plan
-                    .FindElement(By.XPath("//*[@id=\"c\"]/csc-dashboard/div/div[6]/csc-dashboard-postpaid/div/div/div[1]/csc-dashboard-postpaid-mobile/div[2]/dashboard-card/usage-consumption/div[1]/div/div[5]"))
+                    .FindElement(By.CssSelector("usage-consumption > div > div > div:nth-child(5)"))
                     .Text
                     .Split(" ")[0]);
 
@@ -79,14 +82,14 @@ namespace MobileDataUsageReminder.Services
                     Month = DateTime.Now.ToString("MMMM"),
                     Year = DateTime.Now.Year,
                     PhoneNumber = phoneNumber,
-                    Package = package,
-                    DataUsedPercentage = Convert.ToInt32(Math.Round(dataUserPercentageStr / 10.0) * 10),
+                    DataUsedPercentage = Convert.ToInt32(Math.Round(dataUsedPercentage / 10.0) * 10),
                     MonthlyDataGb = monthlyDataGb
                 });
             }
 
             return dataUsages;
         }
+
     }
 
 }

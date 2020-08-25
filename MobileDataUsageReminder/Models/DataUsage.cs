@@ -7,7 +7,6 @@ namespace MobileDataUsageReminder.Models
     public class DataUsage
     {
         public string PhoneNumber { get; set; }
-        public string Package { get; set; }
         public int MonthlyDataGb { get; set; }
         public int DataUsedPercentage { get; set; }
         public DateTime FullDate { get; set; }
