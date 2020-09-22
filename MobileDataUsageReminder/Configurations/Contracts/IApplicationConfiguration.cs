@@ -2,7 +2,7 @@
 {
     public interface IApplicationConfiguration
     {
-        string Test { get; }
+        string RecordsFileName { get; }
         string ProviderEmail { get; }
         string ProviderPassword { get; }
     }

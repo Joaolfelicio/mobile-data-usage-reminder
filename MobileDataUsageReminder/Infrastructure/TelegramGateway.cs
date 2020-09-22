@@ -11,31 +11,31 @@ namespace MobileDataUsageReminder.Infrastructure
 {
     public class TelegramGateway : IReminderGateway
     {
-        private readonly IApplicationConfiguration _applicationConfiguration;
+        private readonly ITelegramApiConfiguration _telegramApiConfiguration;
 
-        public TelegramGateway(IApplicationConfiguration applicationConfiguration)
+        public TelegramGateway(ITelegramApiConfiguration telegramApiConfiguration)
         {
-            _applicationConfiguration = applicationConfiguration;
+            _telegramApiConfiguration = telegramApiConfiguration;
         }
-        //string UrlTelegramPhotoMessage = _telegramApiSettings.Url + Auth.AccessToken.ACCESS_TOKEN_TELEGRAM + "/sendMessage";
 
         public async Task SendPostToApiReminder(DataUsage dataUsage)
         {
-
             var reminder = new TelegramReminder
             {
-                ChatId = 1,
+                ChatId = _telegramApiConfiguration.ChatId,
                 ParseMode = "HTML",
                 Text = $"Mobile Data Usage Reminder: Your mobile data plan for <strong>{dataUsage.PhoneNumber}</strong> " +
                        $"has reached <strong>{dataUsage.DataUsedPercentage}%</strong> of the total of <em>{dataUsage.MonthlyDataGb}GB</em> " +
                        $"that you have for the month of {dataUsage.Month}."
             };
 
-            var jsonData = ConvertToJsonData(reminder);
+            var data = ConvertToJsonData(reminder);
+
+            var urlTelegramMessage = _telegramApiConfiguration.ApiEndPoint + _telegramApiConfiguration.AccessToken + "/sendMessage";
 
             using (var httpClient = new HttpClient())
             {
-                await httpClient.PostAsync("Test.com", jsonData);
+                await httpClient.PostAsync(urlTelegramMessage, data);
             }
         }
 

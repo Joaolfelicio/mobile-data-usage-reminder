@@ -2,9 +2,10 @@
 
 namespace MobileDataUsageReminder.Configurations
 {
-    public class TelegramConfiguration : ITelegramConfiguration
+    public class TelegramApiConfiguration : ITelegramApiConfiguration
     {
         public int ChatId { get; set; }
         public string ApiEndPoint { get; set; }
+        public string AccessToken { get; set; }
     }
 }

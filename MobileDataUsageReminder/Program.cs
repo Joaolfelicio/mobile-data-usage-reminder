@@ -36,7 +36,6 @@ namespace MobileDataUsageReminder
 
             ServiceProvider = servicesCollection.BuildServiceProvider();
 
-
             try
             {
                 MobileDataUsageProcessor = ServiceProvider.GetRequiredService<IMobileDataUsageProcessor>();
@@ -72,14 +71,16 @@ namespace MobileDataUsageReminder
         static void ConfigureServices(IServiceCollection services)
         {
             services.Configure<ApplicationConfiguration>(Configuration.GetSection(nameof(ApplicationConfiguration)))
-                    .AddSingleton<IApplicationConfiguration>(sp => sp.GetRequiredService<IOptions<ApplicationConfiguration>>().Value)
-                    .Configure<TelegramConfiguration>(Configuration.GetSection(nameof(TelegramConfiguration)))
-                    .AddSingleton<ITelegramConfiguration>(sp => sp.GetRequiredService<IOptions<TelegramConfiguration>>().Value)
-                    .AddScoped<IMobileDataUsageProcessor, MobileDataUsageProcessor>()
-                    .AddScoped<IProviderDataUsage, OrangeDataUsage>()
-                    .AddScoped<IPreviousRemindersService, PreviousRemindersService>()
-                    .AddScoped<IReminderGateway, TelegramGateway>()
-                    .AddScoped<IReminderService, ReminderService>();
+                .AddSingleton<IApplicationConfiguration>(sp =>
+                    sp.GetRequiredService<IOptions<ApplicationConfiguration>>().Value)
+                .Configure<TelegramApiConfiguration>(Configuration.GetSection(nameof(TelegramApiConfiguration)))
+                .AddSingleton<ITelegramApiConfiguration>(sp =>
+                    sp.GetRequiredService<IOptions<TelegramApiConfiguration>>().Value)
+                .AddScoped<IMobileDataUsageProcessor, MobileDataUsageProcessor>()
+                .AddScoped<IProviderDataUsage, OrangeDataUsage>()
+                .AddScoped<IPreviousRemindersService, PreviousRemindersService>()
+                .AddScoped<IReminderGateway, TelegramGateway>()
+                .AddScoped<IReminderService, ReminderService>();
         }
     }
 }

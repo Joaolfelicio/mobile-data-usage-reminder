@@ -18,10 +18,10 @@ namespace MobileDataUsageReminder.Services
                 using (var reader = new StreamReader(fileName))
                 using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
-                    var firstRecord = csv.GetRecord<DataUsage>();
+                    var firstRecord = csv.GetRecords<DataUsage>().FirstOrDefault();
 
                     //If the file holds the records for the previous year, delete it
-                    if (firstRecord.Year != DateTime.Now.Year)
+                    if (firstRecord?.Year != DateTime.Now.Year)
                     {
                         File.Delete(fileName);
                     }

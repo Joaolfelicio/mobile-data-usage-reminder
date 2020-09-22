@@ -29,15 +29,20 @@ namespace MobileDataUsageReminder.Components
         {
             var mobileDataUsages = _providerDataUsage.GetMobileDataUsage();
 
-            _previousRemindersService.ArchivePreviousYearReminders(_applicationConfiguration.Test);
+            _previousRemindersService.ArchivePreviousYearReminders(_applicationConfiguration.RecordsFileName);
 
-            var allReminders = _previousRemindersService.GetAllDataUsages(_applicationConfiguration.Test);
+            var previousReminders = _previousRemindersService.GetAllDataUsages(_applicationConfiguration.RecordsFileName);
 
-            var remindersToSend = _previousRemindersService.DataUsagesToRemind(allReminders, mobileDataUsages);
+            var remindersToSend = _previousRemindersService.DataUsagesToRemind(previousReminders, mobileDataUsages);
 
-            _previousRemindersService.WriteAllDataUsages(_applicationConfiguration.Test, allReminders.Concat(remindersToSend).ToList());
+            var allReminders = previousReminders.Concat(remindersToSend).ToList();
 
-            await _reminderService.SendReminder(remindersToSend);
+            _previousRemindersService.WriteAllDataUsages(_applicationConfiguration.RecordsFileName, allReminders);
+
+            if (remindersToSend.Count > 0)
+            {
+                await _reminderService.SendReminder(remindersToSend);
+            }
         }
     }
 }
