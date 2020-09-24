@@ -2,7 +2,7 @@
 
 ## TODO:
 
-[ ] Scheduler
+[x] Scheduler
 
 [ ] Logging
 

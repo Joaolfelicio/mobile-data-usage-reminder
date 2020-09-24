@@ -13,6 +13,7 @@ using MobileDataUsageReminder.Configurations;
 using MobileDataUsageReminder.Configurations.Contracts;
 using MobileDataUsageReminder.Infrastructure;
 using MobileDataUsageReminder.Infrastructure.Contracts;
+using MobileDataUsageReminder.Scheduler;
 using MobileDataUsageReminder.Services.Contracts;
 using Serilog;
 using ApplicationConfiguration = MobileDataUsageReminder.Configurations.ApplicationConfiguration;
@@ -23,9 +24,8 @@ namespace MobileDataUsageReminder
     {
         private static IServiceProvider ServiceProvider { get; set; }
         private static IConfiguration Configuration { get; set; }
-        private static IMobileDataUsageProcessor MobileDataUsageProcessor { get; set; }
 
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             Configuration = StartUp();
 
@@ -36,17 +36,8 @@ namespace MobileDataUsageReminder
 
             ServiceProvider = servicesCollection.BuildServiceProvider();
 
-            try
-            {
-                MobileDataUsageProcessor = ServiceProvider.GetRequiredService<IMobileDataUsageProcessor>();
-
-                await MobileDataUsageProcessor.ProcessMobileDataUsage();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            var jobScheduler = new JobScheduler(ServiceProvider);
+            jobScheduler.Run().GetAwaiter().GetResult();
         }
 
         static IConfiguration StartUp()
@@ -80,7 +71,8 @@ namespace MobileDataUsageReminder
                 .AddScoped<IProviderDataUsage, OrangeDataUsage>()
                 .AddScoped<IPreviousRemindersService, PreviousRemindersService>()
                 .AddScoped<IReminderGateway, TelegramGateway>()
-                .AddScoped<IReminderService, ReminderService>();
+                .AddScoped<IReminderService, ReminderService>()
+                .AddScoped<DataUsageReminderJob>();
         }
     }
 }

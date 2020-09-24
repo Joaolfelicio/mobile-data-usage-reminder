@@ -16,14 +16,10 @@ namespace MobileDataUsageReminder.Services
     class OrangeDataUsage : IProviderDataUsage
     {
         private readonly IApplicationConfiguration _applicationConfiguration;
-        public IWebDriver WebDriver;
 
         public OrangeDataUsage(IApplicationConfiguration applicationConfiguration)
         {
             _applicationConfiguration = applicationConfiguration;
-
-            WebDriver = new ChromeDriver();
-            WebDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
         }
 
         public List<DataUsage> GetMobileDataUsage()
@@ -39,13 +35,16 @@ namespace MobileDataUsageReminder.Services
 
         private IWebDriver LoginWebDriver()
         {
-            WebDriver.Navigate().GoToUrl("https://client.orange.lu/selfcare/login");
+            var webDriver = new ChromeDriver();
+            webDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
 
-            WebDriver.FindElement(By.Id("userName")).SendKeys(_applicationConfiguration.ProviderEmail);
-            WebDriver.FindElement(By.Id("password")).SendKeys(_applicationConfiguration.ProviderPassword);
-            WebDriver.FindElement(By.CssSelector(".login-container form")).Submit();
+            webDriver.Navigate().GoToUrl("https://client.orange.lu/selfcare/login");
 
-            return WebDriver;
+            webDriver.FindElement(By.Id("userName")).SendKeys(_applicationConfiguration.ProviderEmail);
+            webDriver.FindElement(By.Id("password")).SendKeys(_applicationConfiguration.ProviderPassword);
+            webDriver.FindElement(By.CssSelector(".login-container form")).Submit();
+
+            return webDriver;
         }
 
         private List<DataUsage> GetDataUsages(IWebDriver authDriver)
