@@ -4,7 +4,7 @@
 
 [x] Scheduler
 
-[ ] Logging
+[x] Logging
 
 [ ] Test Container Deployment
 

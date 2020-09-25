@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using MobileDataUsageReminder.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MobileDataUsageReminder.Components;
 using MobileDataUsageReminder.Components.Contracts;
@@ -17,6 +18,7 @@ using MobileDataUsageReminder.Scheduler;
 using MobileDataUsageReminder.Services.Contracts;
 using Serilog;
 using ApplicationConfiguration = MobileDataUsageReminder.Configurations.ApplicationConfiguration;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace MobileDataUsageReminder
 {
@@ -73,6 +75,11 @@ namespace MobileDataUsageReminder
                 .AddScoped<IReminderGateway, TelegramGateway>()
                 .AddScoped<IReminderService, ReminderService>()
                 .AddScoped<DataUsageReminderJob>();
+
+            services.AddLogging(l =>
+            {
+                l.AddSerilog(logger: Log.Logger, dispose: true);
+            });
         }
     }
 }

@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
+using Microsoft.Extensions.Logging;
 using MobileDataUsageReminder.Configurations.Contracts;
 using MobileDataUsageReminder.Models;
 using MobileDataUsageReminder.Services.Contracts;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Support.UI;
 
 namespace MobileDataUsageReminder.Services
 {
     class OrangeDataUsage : IProviderDataUsage
     {
         private readonly IApplicationConfiguration _applicationConfiguration;
+        private readonly ILogger<OrangeDataUsage> _logger;
 
-        public OrangeDataUsage(IApplicationConfiguration applicationConfiguration)
+        public OrangeDataUsage(IApplicationConfiguration applicationConfiguration,
+                               ILogger<OrangeDataUsage> logger)
         {
             _applicationConfiguration = applicationConfiguration;
+            _logger = logger;
         }
 
         public List<DataUsage> GetMobileDataUsage()
@@ -64,17 +64,28 @@ namespace MobileDataUsageReminder.Services
                 //If the subscription box is for the Device Advantage
                 if (!plan.FindElement(By.CssSelector("h2.pageSubTitle")).Text.Contains("Device Advantage")) continue;
 
+                //Get the phone number of the subscription
                 var phoneNumber = plan.FindElement(By.CssSelector("h2.pageSubTitle span")).Text.Substring(3);
-                var dataUsedPercentage = 100 - int.Parse(Regex.Match(plan.FindElement(By.CssSelector(".chart-bar")).GetAttribute("style"), @"\d+\.*\d*").Value);
+
+                //Get the second chart bar display (the second one is the one referring to the used data), so we can extract the width % (as it is the data used percentage)
+                var charBarStyle = plan.FindElement(By.CssSelector(".chart-bar:nth-child(2)")).GetAttribute("style");
+
+                //From the style, get the width percentage formatted to int, but as string
+                var dataUsageString = Regex.Match(charBarStyle, @"\d+\.*\d*").Value;
+                
+                //Parse it to int so we have the used data percentage
+                var dataUsedPercentage = int.Parse(dataUsageString);
+
+                //If the dataUsedPercentage is 0, assign it 1, so we can make the needed calculus
                 dataUsedPercentage = dataUsedPercentage == 0 ? 1 : dataUsedPercentage;
 
-                //Fix this to css selectors
+                //Get the Monthly Data Gigabytes
                 var monthlyDataGb = int.Parse(plan
                     .FindElement(By.CssSelector("usage-consumption > div > div > div:nth-child(5)"))
                     .Text
                     .Split(" ")[0]);
 
-                dataUsages.Add(new DataUsage
+                var currentDataUsage = new DataUsage
                 {
                     FullDate = DateTime.Now,
                     Day = DateTime.Now.Day,
@@ -83,12 +94,14 @@ namespace MobileDataUsageReminder.Services
                     PhoneNumber = phoneNumber,
                     DataUsedPercentage = Convert.ToInt32(Math.Round(dataUsedPercentage / 10.0) * 10),
                     MonthlyDataGb = monthlyDataGb
-                });
-            }
+                };
 
+                dataUsages.Add(currentDataUsage);
+
+                _logger.LogInformation($"Current data usage is at {currentDataUsage.DataUsedPercentage}% of {currentDataUsage.MonthlyDataGb} GB " +
+                                        $"for number {currentDataUsage.PhoneNumber}.");
+            }
             return dataUsages;
         }
-
     }
-
 }
