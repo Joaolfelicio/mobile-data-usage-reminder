@@ -5,7 +5,7 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["MobileDataUsageReminder/MobileDataUsageReminder.csproj", "MobileDataUsageReminder/"]
+COPY ["MobileDataUsageReminder.csproj", "MobileDataUsageReminder/"]
 RUN dotnet restore "MobileDataUsageReminder/MobileDataUsageReminder.csproj"
 COPY . .
 WORKDIR "/src/MobileDataUsageReminder"
