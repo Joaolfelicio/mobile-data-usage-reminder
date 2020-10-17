@@ -14,6 +14,10 @@ namespace MobileDataUsageReminder.Services
         {
             _reminderGateway = reminderGateway;
         }
+        /// <summary>
+        /// Sends the reminder.
+        /// </summary>
+        /// <param name="dataUsages">The data usages.</param>
         public async Task SendReminder(List<MobileDataPackage> dataUsages)
         {
             foreach (var dataUsage in dataUsages)

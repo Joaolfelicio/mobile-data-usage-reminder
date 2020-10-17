@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using MobileDataUsageReminder.Components.Contracts;
 using Quartz;
 using Quartz.Spi;
 

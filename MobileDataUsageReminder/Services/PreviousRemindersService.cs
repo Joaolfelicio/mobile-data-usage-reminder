@@ -18,6 +18,11 @@ namespace MobileDataUsageReminder.Services
         {
             _logger = logger;
         }
+        /// <summary>
+        /// Gets all data usages.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <returns></returns>
         public List<MobileDataPackage> GetAllDataUsages(string fileName)
         {
             var dataUsages = new List<MobileDataPackage>();
@@ -43,7 +48,13 @@ namespace MobileDataUsageReminder.Services
             return dataUsages;
         }
 
-        public List<MobileDataPackage> DataUsagesToRemind(List<MobileDataPackage> allDataUsages, List<MobileDataPackage> currentMobileDataPackages)
+        /// <summary>
+        /// Gets the data usages to remind.
+        /// </summary>
+        /// <param name="allDataUsages">All data usages.</param>
+        /// <param name="currentMobileDataPackages">The current mobile data packages.</param>
+        /// <returns></returns>
+        public List<MobileDataPackage> GetDataUsagesToRemind(List<MobileDataPackage> allDataUsages, List<MobileDataPackage> currentMobileDataPackages)
         {
             var dataUsagesToRemind = new List<MobileDataPackage>();
 
@@ -66,6 +77,11 @@ namespace MobileDataUsageReminder.Services
             return dataUsagesToRemind;
         }
 
+        /// <summary>
+        /// Writes all data usages.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <param name="allDataUsages">All data usages.</param>
         public void WriteAllDataUsages(string fileName, List<MobileDataPackage> allDataUsages)
         {
             using (var writer = new StreamWriter(fileName))

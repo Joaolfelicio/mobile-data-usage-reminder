@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-
-namespace MobileDataUsageReminder.Models
+﻿namespace MobileDataUsageReminder.Models
 {
     public class DataProduct
     {

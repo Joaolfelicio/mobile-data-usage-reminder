@@ -32,6 +32,13 @@ namespace MobileDataUsageReminder.Infrastructure
         public string TokenType { get; private set; }
         public string ClientId { get; private set; }
 
+
+        /// <summary>
+        /// Login to the provider, will store the TokenValue and the TokenType
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <exception cref="Exception">Failed to login to orange</exception>
         public async Task Login(string username, string password)
         {
             var loginRequest = new LoginRequest()
@@ -63,6 +70,10 @@ namespace MobileDataUsageReminder.Infrastructure
             }
         }
 
+        /// <summary>
+        /// Get the client details and store the client id
+        /// </summary>
+        /// <exception cref="Exception">Failed to get the client in orange</exception>
         public async Task GetClient()
         {
             using (var httpClient = new HttpClient())
@@ -142,6 +153,14 @@ namespace MobileDataUsageReminder.Infrastructure
             }
         }
 
+        /// <summary>
+        /// Gets the data usage for the data product
+        /// </summary>
+        /// <param name="dataProduct"></param>
+        /// <returns>
+        /// The data usage
+        /// </returns>
+        /// <exception cref="Exception">Failed to get the data usage</exception>
         public async Task<DataUsage> GetDataUsage(DataProduct dataProduct)
         {
             using (var httpClient = new HttpClient())

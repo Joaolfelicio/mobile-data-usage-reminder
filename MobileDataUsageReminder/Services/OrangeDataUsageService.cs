@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MobileDataUsageReminder.Configurations.Contracts;
 using MobileDataUsageReminder.Infrastructure.Contracts;
 using MobileDataUsageReminder.Models;
 using MobileDataUsageReminder.Services.Contracts;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium;
+
 
 namespace MobileDataUsageReminder.Services
 {
@@ -31,6 +29,10 @@ namespace MobileDataUsageReminder.Services
             _telegramApiConfiguration = telegramApiConfiguration;
         }
 
+        /// <summary>
+        /// Gets the mobile data packages.
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<MobileDataPackage>> GetMobileDataPackages()
         {
             await _providerGateway.Login(_applicationConfiguration.ProviderEmail, _applicationConfiguration.ProviderPassword);
@@ -53,9 +55,10 @@ namespace MobileDataUsageReminder.Services
                 var chatId = _telegramApiConfiguration.TelegramUsers
                     .First(x => x.PhoneNumber == dataProduct.PhoneNumber).ChatId;
 
-                var usedAmount = Convert.ToInt32(dataUsage.UsedAmount);
-                var initialAmount = Convert.ToInt32(dataUsage.InitialAmount);
-                var usedPercentage = (usedAmount * 100) / initialAmount;
+                var truncatedUsedAmount =
+                    dataUsage.UsedAmount.Substring(0, dataUsage.UsedAmount.IndexOf(".", StringComparison.Ordinal));
+
+                var usedPercentage = int.Parse(truncatedUsedAmount) * 100 / int.Parse(dataUsage.InitialAmount);
 
                 var roundedUsedPercentage = Convert.ToInt32(Math.Round(usedPercentage / 10.0) * 10);
 

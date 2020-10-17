@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MobileDataUsageReminder.Components.Contracts;
 using MobileDataUsageReminder.Configurations.Contracts;
-using MobileDataUsageReminder.Models;
 using MobileDataUsageReminder.Services.Contracts;
 
 namespace MobileDataUsageReminder.Components
@@ -40,7 +37,7 @@ namespace MobileDataUsageReminder.Components
             var previousReminders = _previousRemindersService.GetAllDataUsages(_applicationConfiguration.RecordsFileName);
 
             //Build a list with the new reminders to be send
-            var remindersToSend = _previousRemindersService.DataUsagesToRemind(previousReminders, mobileDataPackages);
+            var remindersToSend = _previousRemindersService.GetDataUsagesToRemind(previousReminders, mobileDataPackages);
 
             if (remindersToSend.Count > 0)
             {
