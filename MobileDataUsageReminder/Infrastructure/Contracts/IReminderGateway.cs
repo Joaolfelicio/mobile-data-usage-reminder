@@ -6,6 +6,6 @@ namespace MobileDataUsageReminder.Infrastructure.Contracts
 {
     public interface IReminderGateway
     {
-        Task SendPostToApiReminder(DataUsage dataUsage);
+        Task SendPostToApiReminder(MobileDataPackage mobileDataPackage);
     }
 }

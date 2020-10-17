@@ -12,9 +12,9 @@ namespace MobileDataUsageReminder.Infrastructure.Contracts
 
         Task Login(string username, string password);
 
-        Task GetClientId();
+        Task GetClient();
 
-        Task<List<DataProduct>> GetDataProducts();
+        Task<List<DataProduct>> GetMobileDataProducts(List<string> productsPhoneNumber);
 
         Task<DataUsage> GetDataUsage(DataProduct dataProduct);
     }

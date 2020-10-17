@@ -7,6 +7,6 @@ namespace MobileDataUsageReminder.Services.Contracts
 {
     public interface IProviderDataUsage
     {
-        List<DataUsage> GetMobileDataUsage();
+        List<MobileDataPackage> GetMobileDataPackages();
     }
 }

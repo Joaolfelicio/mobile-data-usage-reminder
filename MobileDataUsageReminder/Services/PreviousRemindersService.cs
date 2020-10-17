@@ -25,7 +25,7 @@ namespace MobileDataUsageReminder.Services
                 using (var reader = new StreamReader(fileName))
                 using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
-                    var firstRecord = csv.GetRecords<DataUsage>().FirstOrDefault();
+                    var firstRecord = csv.GetRecords<MobileDataPackage>().FirstOrDefault();
 
                     //If the file holds the records for the previous year, delete it
                     if (firstRecord?.Year != DateTime.Now.Year)
@@ -42,9 +42,9 @@ namespace MobileDataUsageReminder.Services
             }
         }
 
-        public List<DataUsage> GetAllDataUsages(string fileName)
+        public List<MobileDataPackage> GetAllDataUsages(string fileName)
         {
-            var dataUsages = new List<DataUsage>();
+            var dataUsages = new List<MobileDataPackage>();
 
             if (File.Exists(fileName))
             {
@@ -52,7 +52,7 @@ namespace MobileDataUsageReminder.Services
                 using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
                     //Get this year records
-                    var records = csv.GetRecords<DataUsage>();
+                    var records = csv.GetRecords<MobileDataPackage>();
 
                     dataUsages.AddRange(records);
 
@@ -67,9 +67,9 @@ namespace MobileDataUsageReminder.Services
             return dataUsages;
         }
 
-        public List<DataUsage> DataUsagesToRemind(List<DataUsage> allDataUsages, List<DataUsage> currentDataUsages)
+        public List<MobileDataPackage> DataUsagesToRemind(List<MobileDataPackage> allDataUsages, List<MobileDataPackage> currentDataUsages)
         {
-            var dataUsagesToRemind = new List<DataUsage>();
+            var dataUsagesToRemind = new List<MobileDataPackage>();
 
             foreach (var currentDataUsage in currentDataUsages)
             {
@@ -90,7 +90,7 @@ namespace MobileDataUsageReminder.Services
             return dataUsagesToRemind;
         }
 
-        public void WriteAllDataUsages(string fileName, List<DataUsage> allDataUsages)
+        public void WriteAllDataUsages(string fileName, List<MobileDataPackage> allDataUsages)
         {
             using (var writer = new StreamWriter(fileName))
             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))

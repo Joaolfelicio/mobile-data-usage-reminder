@@ -18,15 +18,15 @@ namespace MobileDataUsageReminder.Infrastructure
             _telegramApiConfiguration = telegramApiConfiguration;
         }
 
-        public async Task SendPostToApiReminder(DataUsage dataUsage)
+        public async Task SendPostToApiReminder(MobileDataPackage mobileDataPackage)
         {
             var reminder = new TelegramReminder
             {
                 ChatId = _telegramApiConfiguration.ChatId,
                 ParseMode = "HTML",
-                Text = $"Mobile Data Usage Reminder: Your mobile data plan for <strong>{dataUsage.PhoneNumber}</strong> " +
-                       $"has reached <strong>{dataUsage.DataUsedPercentage}%</strong> of the total of <em>{dataUsage.MonthlyDataGb}GB</em> " +
-                       $"that you have for the month of {dataUsage.Month}."
+                Text = $"Mobile Data Usage Reminder: Your mobile data plan for <strong>{mobileDataPackage.PhoneNumber}</strong> " +
+                       $"has reached <strong>{mobileDataPackage.DataUsedPercentage}%</strong> of the total of <em>{mobileDataPackage.MonthlyDataGb}GB</em> " +
+                       $"that you have for the month of {mobileDataPackage.Month}."
             };
 
             var data = ConvertToJsonData(reminder);

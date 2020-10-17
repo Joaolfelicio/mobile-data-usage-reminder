@@ -6,6 +6,6 @@ namespace MobileDataUsageReminder.Services.Contracts
 {
     public interface IReminderService
     {
-        Task SendReminder(List<DataUsage> dataUsages);
+        Task SendReminder(List<MobileDataPackage> dataUsages);
     }
 }
