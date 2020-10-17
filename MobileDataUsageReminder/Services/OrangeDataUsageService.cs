@@ -59,7 +59,7 @@ namespace MobileDataUsageReminder.Services
 
                 var roundedUsedPercentage = Convert.ToInt32(Math.Round(usedPercentage / 10.0) * 10);
 
-                var mobileDataPackage = new MobileDataPackage()
+                mobileDataPackages.Add(new MobileDataPackage()
                 {
                     PhoneNumber = dataProduct.PhoneNumber,
                     FullDate = DateTime.Now,
@@ -72,7 +72,7 @@ namespace MobileDataUsageReminder.Services
                     RemainingAmount = dataUsage.RemainingAmount,
                     ChatId = chatId,
                     UsedPercentage = roundedUsedPercentage
-                };
+                });
             }
 
             return mobileDataPackages;

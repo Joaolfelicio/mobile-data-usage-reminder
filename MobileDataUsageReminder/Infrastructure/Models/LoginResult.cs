@@ -1,12 +1,13 @@
 ﻿using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace MobileDataUsageReminder.Infrastructure.Models
 {
     public class LoginResult
     {
-        [JsonPropertyName("token_type")]
+        [JsonProperty("token_type")]
         public string TokenType { get; set; }
-        [JsonPropertyName("access_token")]
+        [JsonProperty("access_token")]
         public string TokenValue { get; set; }
     }
 }

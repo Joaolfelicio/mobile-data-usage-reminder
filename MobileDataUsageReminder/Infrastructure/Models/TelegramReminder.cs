@@ -1,6 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using MobileDataUsageReminder.Models;
+using Newtonsoft.Json;
 
-namespace MobileDataUsageReminder.Models
+namespace MobileDataUsageReminder.Infrastructure.Models
 {
     public class TelegramReminder : Reminder
     {

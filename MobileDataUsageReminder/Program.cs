@@ -9,6 +9,8 @@ using MobileDataUsageReminder.Components;
 using MobileDataUsageReminder.Components.Contracts;
 using MobileDataUsageReminder.Configurations;
 using MobileDataUsageReminder.Configurations.Contracts;
+using MobileDataUsageReminder.Constants;
+using MobileDataUsageReminder.Constants.Contracts;
 using MobileDataUsageReminder.Infrastructure;
 using MobileDataUsageReminder.Infrastructure.Contracts;
 using MobileDataUsageReminder.Scheduler;
@@ -68,8 +70,11 @@ namespace MobileDataUsageReminder
                     sp.GetRequiredService<IOptions<TelegramApiConfiguration>>().Value)
                 .AddScoped<IMobileDataUsageProcessor, MobileDataUsageProcessor>()
                 .AddScoped<IProviderDataUsage, OrangeDataUsage>()
-                .AddScoped<IPreviousRemindersService, PreviousRemindersService>()
+                .AddScoped<IProviderGateway, OrangeGateway>()
                 .AddScoped<IReminderGateway, TelegramGateway>()
+                .AddScoped<IOrangeConstants, OrangeConstants>()
+                .AddScoped<IOrangeEndpoints, OrangeEndpoints>()
+                .AddScoped<IPreviousRemindersService, PreviousRemindersService>()
                 .AddScoped<IReminderService, ReminderService>()
                 .AddScoped<DataUsageReminderJob>();
 
