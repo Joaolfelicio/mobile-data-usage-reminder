@@ -1,7 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using MobileDataUsageReminder.Constants.Contracts;
 using MobileDataUsageReminder.Infrastructure.Contracts;
+using MobileDataUsageReminder.Infrastructure.Models;
 using MobileDataUsageReminder.Models;
 using Newtonsoft.Json;
 
@@ -9,30 +14,61 @@ namespace MobileDataUsageReminder.Infrastructure
 {
     public class OrangeGateway : IProviderGateway
     {
-        private string TokenValue { get; set; }
-        private string ClientId { get; set; }
+        private readonly IOrangeEndpoints _orangeEndpoints;
+        private readonly ILogger<OrangeGateway> _logger;
 
-        public LoginResult Login(string username, string password)
+        public OrangeGateway(IOrangeEndpoints orangeEndpoints,
+            ILogger<OrangeGateway> logger)
         {
-            
-            
+            _orangeEndpoints = orangeEndpoints;
+            _logger = logger;
+        }
+        public string TokenValue { get; private set; }
+        public string TokenType { get; private set; }
+        public string ClientId { get; private set; }
+
+        public async Task Login(string username, string password)
+        {
+            var loginRequest = new LoginRequest()
+            {
+                Username = username,
+                Password = password
+            };
+
+            var data = ConvertToJsonData(loginRequest);
+
             using (var httpClient = new HttpClient())
             {
-                await httpClient.PostAsync(urlTelegramMessage, data);
+                var response = await httpClient.PostAsync(_orangeEndpoints.LoginEndpoint, data);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation("Successfully logged in into orange.");
+
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    var responseData = JsonConvert.DeserializeObject<LoginResult>(responseString);
+
+                    TokenType = responseData.TokenType;
+                    TokenValue = responseData.TokenValue;
+                }
+                else
+                {
+                    throw new Exception($"Failed to login to orange: {response.ReasonPhrase}");
+                }
             }
         }
 
-        public string GetClientId()
+        public async Task GetClientId()
         {
             throw new System.NotImplementedException();
         }
 
-        public List<DataProduct> GetDataProducts()
+        public async Task<List<DataProduct>> GetDataProducts()
         {
             throw new System.NotImplementedException();
         }
 
-        public DataUsage GetDataUsage(DataProduct dataProduct)
+        public async Task<DataUsage> GetDataUsage(DataProduct dataProduct)
         {
             throw new System.NotImplementedException();
         }

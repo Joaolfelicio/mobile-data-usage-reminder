@@ -1,16 +1,21 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MobileDataUsageReminder.Models;
 
 namespace MobileDataUsageReminder.Infrastructure.Contracts
 {
     public interface IProviderGateway
     {
-        LoginResult Login(string username, string password);
+        public string TokenValue { get; }
+        public string TokenType { get; }
+        public string ClientId { get;}
 
-        string GetClientId();
+        Task Login(string username, string password);
 
-        List<DataProduct> GetDataProducts();
+        Task GetClientId();
 
-        DataUsage GetDataUsage(DataProduct dataProduct);
+        Task<List<DataProduct>> GetDataProducts();
+
+        Task<DataUsage> GetDataUsage(DataProduct dataProduct);
     }
 }
