@@ -1,12 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
 using MobileDataUsageReminder.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MobileDataUsageReminder.Components;
 using MobileDataUsageReminder.Components.Contracts;
@@ -18,15 +15,15 @@ using MobileDataUsageReminder.Scheduler;
 using MobileDataUsageReminder.Services.Contracts;
 using Serilog;
 using ApplicationConfiguration = MobileDataUsageReminder.Configurations.ApplicationConfiguration;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace MobileDataUsageReminder
 {
-    class Program
+    static class Program
     {
         private static IServiceProvider ServiceProvider { get; set; }
         private static IConfiguration Configuration { get; set; }
-
+        
+        [STAThread]
         static void Main(string[] args)
         {
             Configuration = StartUp();

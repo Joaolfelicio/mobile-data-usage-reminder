@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Quartz;
 using Quartz.Impl;
+using Quartz.Logging;
 
 namespace MobileDataUsageReminder.Scheduler
 {
@@ -23,6 +24,8 @@ namespace MobileDataUsageReminder.Scheduler
                 {
                     {"quartz.serializer.type", "binary"}
                 };
+
+                LogProvider.IsDisabled = true;
 
                 var factory = new StdSchedulerFactory(props);
                 var scheduler = await factory.GetScheduler();

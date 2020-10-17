@@ -10,6 +10,7 @@
 
 *.db
 wwwroot
+appsettings.json
 
 # User-specific files
 *.rsuser
@@ -422,4 +423,5 @@ $RECYCLE.BIN/
 /MobileDataUsageReminder/chromedriver.exe
 /MobileDataUsageReminder/MobileDataUsageReminder/chromedriver.exe
 /MobileDataUsageReminder/appsettings.Development.json
+/MobileDataUsageReminder/appsettings.json
 /MobileDataUsageReminder/appsettings.json
