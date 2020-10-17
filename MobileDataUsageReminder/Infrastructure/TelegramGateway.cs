@@ -22,10 +22,10 @@ namespace MobileDataUsageReminder.Infrastructure
         {
             var reminder = new TelegramReminder
             {
-                ChatId = _telegramApiConfiguration.ChatId,
+                ChatId = mobileDataPackage.ChatId,
                 ParseMode = "HTML",
-                Text = $"Mobile Data Usage Reminder: Your mobile data plan for <strong>{mobileDataPackage.PhoneNumber}</strong> " +
-                       $"has reached <strong>{mobileDataPackage.DataUsedPercentage}%</strong> of the total of <em>{mobileDataPackage.MonthlyDataGb}GB</em> " +
+                Text = $"Mobile Data Usage Reminder: Your mobile data plan has reached " +
+                       $"<strong>{mobileDataPackage.UsedPercentage}%</strong> of the total of <em>{mobileDataPackage.InitialAmount}{mobileDataPackage.Unit}</em> " +
                        $"that you have for the month of {mobileDataPackage.Month}."
             };
 

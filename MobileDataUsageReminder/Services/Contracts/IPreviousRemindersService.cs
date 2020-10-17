@@ -5,9 +5,8 @@ namespace MobileDataUsageReminder.Services.Contracts
 {
     public interface IPreviousRemindersService
     {
-        void ArchivePreviousYearReminders(string fileName);
         List<MobileDataPackage> GetAllDataUsages(string fileName);
-        List<MobileDataPackage> DataUsagesToRemind(List<MobileDataPackage> allDataUsages, List<MobileDataPackage> currentDataUsages);
+        List<MobileDataPackage> DataUsagesToRemind(List<MobileDataPackage> allDataUsages, List<MobileDataPackage> currentMobileDataPackages);
         void WriteAllDataUsages(string fileName, List<MobileDataPackage> allDataUsages);
     }
 }

@@ -34,16 +34,13 @@ namespace MobileDataUsageReminder.Components
         public async Task ProcessMobileDataUsage()
         {
             //Get current mobile usage
-            var mobileDataUsages = _providerDataUsage.GetMobileDataUsage();
-
-            //Archive (if they exist) previous year records
-            _previousRemindersService.ArchivePreviousYearReminders(_applicationConfiguration.RecordsFileName);
+            var mobileDataPackages = await _providerDataUsage.GetMobileDataPackages();
 
             //Get all the previous data usage records
             var previousReminders = _previousRemindersService.GetAllDataUsages(_applicationConfiguration.RecordsFileName);
 
             //Build a list with the new reminders to be send
-            var remindersToSend = _previousRemindersService.DataUsagesToRemind(previousReminders, mobileDataUsages);
+            var remindersToSend = _previousRemindersService.DataUsagesToRemind(previousReminders, mobileDataPackages);
 
             if (remindersToSend.Count > 0)
             {

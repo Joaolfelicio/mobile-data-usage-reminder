@@ -18,30 +18,6 @@ namespace MobileDataUsageReminder.Services
         {
             _logger = logger;
         }
-        public void ArchivePreviousYearReminders(string fileName)
-        {
-            if (File.Exists(fileName))
-            {
-                using (var reader = new StreamReader(fileName))
-                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-                {
-                    var firstRecord = csv.GetRecords<MobileDataPackage>().FirstOrDefault();
-
-                    //If the file holds the records for the previous year, delete it
-                    if (firstRecord?.Year != DateTime.Now.Year)
-                    {
-                        _logger.LogInformation($"Deleting previous year file for the year of {firstRecord?.Year}.");
-
-                        File.Delete(fileName);
-                    }
-                    else
-                    {
-                        _logger.LogInformation($"No file was deleted as the file is for the current year of {firstRecord?.Year}.");
-                    }
-                }
-            }
-        }
-
         public List<MobileDataPackage> GetAllDataUsages(string fileName)
         {
             var dataUsages = new List<MobileDataPackage>();
@@ -67,21 +43,21 @@ namespace MobileDataUsageReminder.Services
             return dataUsages;
         }
 
-        public List<MobileDataPackage> DataUsagesToRemind(List<MobileDataPackage> allDataUsages, List<MobileDataPackage> currentDataUsages)
+        public List<MobileDataPackage> DataUsagesToRemind(List<MobileDataPackage> allDataUsages, List<MobileDataPackage> currentMobileDataPackages)
         {
             var dataUsagesToRemind = new List<MobileDataPackage>();
 
-            foreach (var currentDataUsage in currentDataUsages)
+            foreach (var currentDataUsage in currentMobileDataPackages)
             {
                 var reminderWasAlreadySent = allDataUsages
                     .Where(x => x.Month == DateTime.Now.ToString("MMMM"))
                     .Where(x => x.PhoneNumber == currentDataUsage.PhoneNumber)
-                    .Any(x => x.DataUsedPercentage == currentDataUsage.DataUsedPercentage);
+                    .Any(x => x.UsedPercentage == currentDataUsage.UsedPercentage);
 
-                if (reminderWasAlreadySent == false)
+                if (reminderWasAlreadySent == false && currentDataUsage.UsedPercentage > 0)
                 {
-                    _logger.LogInformation($"Reminder should be sent for: Data usage is at {currentDataUsage.DataUsedPercentage}% of {currentDataUsage.MonthlyDataGb}GB" +
-                                           $"for number {currentDataUsage.PhoneNumber}.");
+                    _logger.LogInformation($"Reminder should be sent for {currentDataUsage.PhoneNumber}: Data usage is at {currentDataUsage.UsedPercentage}% of {currentDataUsage.InitialAmount}" +
+                                           $"{currentDataUsage.Unit} .");
 
                     dataUsagesToRemind.Add(currentDataUsage);
                 }
@@ -98,7 +74,7 @@ namespace MobileDataUsageReminder.Services
                 csv.WriteRecords(allDataUsages.OrderBy(x => x.FullDate));
             }
 
-            _logger.LogInformation($"Deleted all records and re inserted {allDataUsages.Count} records into this year file.");
+            _logger.LogInformation($"Deleted all records and re inserted {allDataUsages.Count} records into the record file.");
         }
     }
 }

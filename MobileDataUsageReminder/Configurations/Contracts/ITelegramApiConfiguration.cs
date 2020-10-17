@@ -1,8 +1,10 @@
-﻿namespace MobileDataUsageReminder.Configurations.Contracts
+﻿using System.Collections.Generic;
+
+namespace MobileDataUsageReminder.Configurations.Contracts
 {
     public interface ITelegramApiConfiguration
     {
-        int ChatId { get; }
+        public List<TelegramUser> TelegramUsers { get; set; }
         string ApiEndPoint { get; }
         string AccessToken { get; }
     }

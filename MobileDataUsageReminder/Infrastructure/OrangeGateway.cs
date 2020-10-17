@@ -21,7 +21,7 @@ namespace MobileDataUsageReminder.Infrastructure
         private readonly ILogger<OrangeGateway> _logger;
 
         public OrangeGateway(IOrangeEndpoints orangeEndpoints,
-            IOrangeConstants orangeConstants
+            IOrangeConstants orangeConstants,
             ILogger<OrangeGateway> logger)
         {
             _orangeEndpoints = orangeEndpoints;
@@ -170,7 +170,6 @@ namespace MobileDataUsageReminder.Infrastructure
                 }
 
                 throw new Exception($"Failed to get the data usage for {dataProduct.PhoneNumber} in orange: {response.ReasonPhrase}");
-
             }
         }
 
