@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MobileDataUsageReminder.Configurations.Contracts;
+using MobileDataUsageReminder.DAL.Models;
 using MobileDataUsageReminder.Infrastructure.Contracts;
 using MobileDataUsageReminder.Models;
 using MobileDataUsageReminder.Services.Contracts;
@@ -33,7 +34,7 @@ namespace MobileDataUsageReminder.Services
         /// Gets the mobile data packages.
         /// </summary>
         /// <returns></returns>
-        public async Task<List<MobileDataPackage>> GetMobileDataPackages()
+        public async Task<List<MobileData>> GetMobileData()
         {
             await _providerGateway.Login(_applicationConfiguration.ProviderEmail, _applicationConfiguration.ProviderPassword);
 
@@ -46,7 +47,7 @@ namespace MobileDataUsageReminder.Services
 
             var dataProducts = await _providerGateway.GetMobileDataProducts(phoneNumbers);
 
-            var mobileDataPackages = new List<MobileDataPackage>();
+            var mobileDataPackages = new List<MobileData>();
 
             foreach (var dataProduct in dataProducts)
             {
@@ -62,7 +63,7 @@ namespace MobileDataUsageReminder.Services
 
                 var roundedUsedPercentage = Convert.ToInt32(Math.Round(usedPercentage / 10.0) * 10);
 
-                mobileDataPackages.Add(new MobileDataPackage()
+                mobileDataPackages.Add(new MobileData()
                 {
                     PhoneNumber = dataProduct.PhoneNumber,
                     FullDate = DateTime.Now,

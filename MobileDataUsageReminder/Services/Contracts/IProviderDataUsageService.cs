@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using MobileDataUsageReminder.DAL.Models;
 using MobileDataUsageReminder.Models;
 
 namespace MobileDataUsageReminder.Services.Contracts
@@ -10,6 +11,6 @@ namespace MobileDataUsageReminder.Services.Contracts
         /// Gets the mobile data packages.
         /// </summary>
         /// <returns></returns>
-        Task<List<MobileDataPackage>> GetMobileDataPackages();
+        Task<List<MobileData>> GetMobileData();
     }
 }

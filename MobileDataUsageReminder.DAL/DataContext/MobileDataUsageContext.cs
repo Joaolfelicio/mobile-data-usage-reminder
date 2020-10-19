@@ -17,8 +17,8 @@ namespace MobileDataUsageReminder.DAL.DataContext
         {
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseNpgsql("Server=localhost;Port=5432;Database=MobileDataUsage;User Id=postgres;Password=password;");
+        //protected override void OnConfiguring(DbContextOptionsBuilder options)
+        //    => options.UseNpgsql("Server=localhost;Port=5432;Database=MobileDataUsage;User Id=postgres;Password=password;");
 
         public DbSet<MobileData> MobileData { get; set; }
 

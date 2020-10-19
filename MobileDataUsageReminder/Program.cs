@@ -13,6 +13,8 @@ using MobileDataUsageReminder.Configurations.Contracts;
 using MobileDataUsageReminder.Constants;
 using MobileDataUsageReminder.Constants.Contracts;
 using MobileDataUsageReminder.DAL.DataContext;
+using MobileDataUsageReminder.DAL.Repository;
+using MobileDataUsageReminder.DAL.Repository.Contracts;
 using MobileDataUsageReminder.Infrastructure;
 using MobileDataUsageReminder.Infrastructure.Contracts;
 using MobileDataUsageReminder.Scheduler;
@@ -27,7 +29,6 @@ namespace MobileDataUsageReminder
         private static IServiceProvider ServiceProvider { get; set; }
         private static IConfiguration Configuration { get; set; }
 
-        [STAThread]
         static void Main(string[] args)
         {
             Configuration = StartUp();
@@ -76,8 +77,9 @@ namespace MobileDataUsageReminder
                 .AddScoped<IReminderGateway, TelegramGateway>()
                 .AddScoped<IOrangeConstants, OrangeConstants>()
                 .AddScoped<IOrangeEndpoints, OrangeEndpoints>()
-                .AddScoped<IPreviousRemindersService, PreviousRemindersService>()
+                .AddScoped<IFilterService, FilterService>()
                 .AddScoped<IReminderService, ReminderService>()
+                .AddScoped<IMobileDataRepository, MobileDataRepository>()
                 .AddScoped<DataUsageReminderJob>();
 
             services.AddLogging(l =>

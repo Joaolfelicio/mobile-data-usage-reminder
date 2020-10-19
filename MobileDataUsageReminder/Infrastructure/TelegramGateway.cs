@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MobileDataUsageReminder.Configurations.Contracts;
+using MobileDataUsageReminder.DAL.Models;
 using MobileDataUsageReminder.Infrastructure.Contracts;
 using MobileDataUsageReminder.Infrastructure.Models;
 using MobileDataUsageReminder.Models;
@@ -25,16 +26,16 @@ namespace MobileDataUsageReminder.Infrastructure
         /// <summary>
         /// Sends the post to API reminder.
         /// </summary>
-        /// <param name="mobileDataPackage">The mobile data package.</param>
-        public async Task SendPostToApiReminder(MobileDataPackage mobileDataPackage)
+        /// <param name="mobileData">The mobile data package.</param>
+        public async Task SendPostToApiReminder(MobileData mobileData)
         {
             var reminder = new TelegramReminder
             {
-                ChatId = mobileDataPackage.ChatId,
+                ChatId = mobileData.ChatId,
                 ParseMode = "HTML",
                 Text = $"Mobile Data Usage Reminder: Your mobile data plan has reached " +
-                       $"<strong>{mobileDataPackage.UsedPercentage}%</strong> of the total of <em>{mobileDataPackage.InitialAmount}{mobileDataPackage.Unit}</em> " +
-                       $"that you have for the month of {mobileDataPackage.Month}."
+                       $"<strong>{mobileData.UsedPercentage}%</strong> of the total of <em>{mobileData.InitialAmount}{mobileData.Unit}</em> " +
+                       $"that you have for the month of {mobileData.Month}."
             };
 
             var data = ConvertToJsonData(reminder);
@@ -47,11 +48,11 @@ namespace MobileDataUsageReminder.Infrastructure
 
                 if (result.IsSuccessStatusCode)
                 {
-                    _logger.LogInformation($"Successfully sent reminder to {mobileDataPackage.PhoneNumber}");
+                    _logger.LogInformation($"Successfully sent reminder to {mobileData.PhoneNumber}");
                 }
                 else
                 {
-                    _logger.LogInformation($"Failed to send reminder to {mobileDataPackage.PhoneNumber}, reason: {result.ReasonPhrase}");
+                    _logger.LogInformation($"Failed to send reminder to {mobileData.PhoneNumber}, reason: {result.ReasonPhrase}");
                 }
             }
         }

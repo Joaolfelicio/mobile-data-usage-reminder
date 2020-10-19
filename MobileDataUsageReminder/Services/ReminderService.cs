@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using MobileDataUsageReminder.DAL.Models;
 using MobileDataUsageReminder.Infrastructure.Contracts;
 using MobileDataUsageReminder.Models;
 using MobileDataUsageReminder.Services.Contracts;
@@ -18,7 +19,7 @@ namespace MobileDataUsageReminder.Services
         /// Sends the reminder.
         /// </summary>
         /// <param name="dataUsages">The data usages.</param>
-        public async Task SendReminder(List<MobileDataPackage> dataUsages)
+        public async Task SendReminder(List<MobileData> dataUsages)
         {
             foreach (var dataUsage in dataUsages)
             {
