@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MobileDataUsageReminder.DAL.DataContext.Migrations
 {
     [DbContext(typeof(MobileDataUsageContext))]
-    [Migration("20201019154832_CreateMobileDataPackage")]
-    partial class CreateMobileDataPackage
+    [Migration("20201019160355_ChnageMobileDataName")]
+    partial class ChnageMobileDataName
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -63,7 +63,7 @@ namespace MobileDataUsageReminder.DAL.DataContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MobileDataPackages");
+                    b.ToTable("MobileData");
                 });
 #pragma warning restore 612, 618
         }

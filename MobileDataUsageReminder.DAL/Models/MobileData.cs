@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MobileDataUsageReminder.DAL.Models
 {
-    public class MobileDataPackage
+    public class MobileData
     {
         [Key]
         public int Id { get; set; }

@@ -19,7 +19,7 @@ namespace MobileDataUsageReminder.DAL.DataContext.Migrations
                 .HasAnnotation("ProductVersion", "3.1.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("MobileDataUsageReminder.DAL.Models.MobileDataPackage", b =>
+            modelBuilder.Entity("MobileDataUsageReminder.DAL.Models.MobileData", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,7 +61,7 @@ namespace MobileDataUsageReminder.DAL.DataContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MobileDataPackages");
+                    b.ToTable("MobileData");
                 });
 #pragma warning restore 612, 618
         }
