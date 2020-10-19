@@ -13,6 +13,6 @@ namespace MobileDataUsageReminder.Configurations
     public class TelegramUser
     {
         public string PhoneNumber { get; set; }
-        public int ChatId { get; set; }
+        public string ChatId { get; set; }
     }
 }

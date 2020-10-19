@@ -10,7 +10,7 @@ namespace MobileDataUsageReminder.Infrastructure.Models
         /// </summary>
         /// <value>The chat identifier.</value>
         [JsonProperty("chat_id")]
-        public int ChatId { get; set; }
+        public string ChatId { get; set; }
 
         /// <summary>
         /// Gets or sets the text.
