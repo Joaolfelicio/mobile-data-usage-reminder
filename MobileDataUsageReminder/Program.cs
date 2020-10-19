@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using MobileDataUsageReminder.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,7 @@ using MobileDataUsageReminder.Configurations;
 using MobileDataUsageReminder.Configurations.Contracts;
 using MobileDataUsageReminder.Constants;
 using MobileDataUsageReminder.Constants.Contracts;
+using MobileDataUsageReminder.DAL.DataContext;
 using MobileDataUsageReminder.Infrastructure;
 using MobileDataUsageReminder.Infrastructure.Contracts;
 using MobileDataUsageReminder.Scheduler;
@@ -81,6 +83,15 @@ namespace MobileDataUsageReminder
             services.AddLogging(l =>
             {
                 l.AddSerilog(logger: Log.Logger, dispose: true);
+            });
+
+            services.AddDbContext<MobileDataUsageContext>(options =>
+            {
+                options.UseNpgsql(Configuration.GetConnectionString("MobileDataUsageConnectionString"),
+                    npgsqlOptions =>
+                    {
+                        npgsqlOptions.EnableRetryOnFailure();
+                    });
             });
         }
     }
