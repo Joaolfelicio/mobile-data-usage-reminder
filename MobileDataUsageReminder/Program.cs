@@ -26,7 +26,7 @@ namespace MobileDataUsageReminder
     {
         private static IServiceProvider ServiceProvider { get; set; }
         private static IConfiguration Configuration { get; set; }
-        
+
         [STAThread]
         static void Main(string[] args)
         {
@@ -85,14 +85,10 @@ namespace MobileDataUsageReminder
                 l.AddSerilog(logger: Log.Logger, dispose: true);
             });
 
-            services.AddDbContext<MobileDataUsageContext>(options =>
-            {
-                options.UseNpgsql(Configuration.GetConnectionString("MobileDataUsageConnectionString"),
-                    npgsqlOptions =>
-                    {
-                        npgsqlOptions.EnableRetryOnFailure();
-                    });
-            });
+            var connectionString = Configuration.GetConnectionString("MobileDataUsageConnectionString");
+
+            services.AddDbContext<MobileDataUsageContext>(options => 
+                options.UseNpgsql(connectionString));
         }
-    }
+}
 }

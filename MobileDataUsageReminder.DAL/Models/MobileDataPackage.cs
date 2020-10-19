@@ -1,9 +1,12 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MobileDataUsageReminder.DAL.Models
 {
     public class MobileDataPackage
     {
+        [Key]
+        public int Id { get; set; }
         public string PhoneNumber { get; set; }
         public string ChatId { get; set; }
         public string Unit { get; set; }

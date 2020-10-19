@@ -8,13 +8,23 @@ namespace MobileDataUsageReminder.DAL.DataContext
 {
     public partial class MobileDataUsageContext : DbContext
     {
+        public MobileDataUsageContext()
+        {
+        }
+
         public MobileDataUsageContext(DbContextOptions<MobileDataUsageContext> options)
             : base(options)
         {
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+            => options.UseNpgsql("Server=localhost;Port=5432;Database=MobileDataUsage;User Id=postgres;Password=password;");
+
         public DbSet<MobileDataPackage> MobileDataPackages { get; set; }
 
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+        }
     }
 }
