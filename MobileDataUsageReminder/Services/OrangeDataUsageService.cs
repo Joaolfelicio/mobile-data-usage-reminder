@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using MobileDataUsageReminder.Configurations.Contracts;
 using MobileDataUsageReminder.DAL.Models;
 using MobileDataUsageReminder.Infrastructure.Contracts;
-using MobileDataUsageReminder.Models;
 using MobileDataUsageReminder.Services.Contracts;
 
 

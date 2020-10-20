@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MobileDataUsageReminder.DAL.DataContext;
 using MobileDataUsageReminder.DAL.Models;
@@ -23,17 +21,14 @@ namespace MobileDataUsageReminder.DAL.Repository
             _logger = logger;
         }
 
-        public async Task<bool> HasReminderAlreadySent(MobileData mobileData)
+        public bool HasReminderAlreadySent(MobileData mobileData)
         {
-            var mobileDatas = await _context.MobileData
-                .ToListAsync();
-            
-            // See if there is mobile 
-            return mobileDatas
-                    .Any(y => y.UsedPercentage == mobileData.UsedPercentage
-                                        && y.PhoneNumber == mobileData.PhoneNumber
-                                        && y.Month == DateTime.Now.ToString("MMMM")
-                                        && y.UsedPercentage == mobileData.UsedPercentage);
+            // Are there any mobile datas for the same month, with the same phone number and used %?
+            return _context.MobileData
+                .AsEnumerable()
+                .Any(x => x.Month == DateTime.Now.ToString("MMMM") &&
+                          x.PhoneNumber == mobileData.PhoneNumber &&
+                          x.UsedPercentage == mobileData.UsedPercentage);
         }
 
         public async Task CreateMobileDatas(List<MobileData> mobileDatas)

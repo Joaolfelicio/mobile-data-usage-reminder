@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MobileDataUsageReminder.DAL.Models;
 using MobileDataUsageReminder.DAL.Repository.Contracts;
@@ -18,13 +17,13 @@ namespace MobileDataUsageReminder.Services
             _mobileDataRepository = mobileDataRepository;
             _logger = logger;
         }
-        public async Task<List<MobileData>> FilterNewMobileDatas(List<MobileData> mobileDatas)
+        public List<MobileData> FilterNewMobileDatas(List<MobileData> mobileDatas)
         {
             var newMobileData = new List<MobileData>();
 
             foreach (var mobileData in mobileDatas)
             {
-                var hasReminderSent = await _mobileDataRepository.HasReminderAlreadySent(mobileData);
+                var hasReminderSent = _mobileDataRepository.HasReminderAlreadySent(mobileData);
 
                 if (hasReminderSent == false)
                 {

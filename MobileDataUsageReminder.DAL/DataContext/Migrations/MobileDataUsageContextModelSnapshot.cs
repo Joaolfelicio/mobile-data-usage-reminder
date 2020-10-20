@@ -2,8 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MobileDataUsageReminder.DAL.DataContext;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace MobileDataUsageReminder.DAL.DataContext.Migrations

@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using MobileDataUsageReminder.DAL.Models;
-using MobileDataUsageReminder.Models;
 
 namespace MobileDataUsageReminder.Infrastructure.Contracts
 {

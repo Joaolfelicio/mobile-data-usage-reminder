@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using MobileDataUsageReminder.DAL.Models;
 using MobileDataUsageReminder.Infrastructure.Contracts;
-using MobileDataUsageReminder.Models;
 using MobileDataUsageReminder.Services.Contracts;
 
 namespace MobileDataUsageReminder.Services

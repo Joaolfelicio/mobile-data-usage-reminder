@@ -1,8 +1,6 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MobileDataUsageReminder.Components.Contracts;
-using MobileDataUsageReminder.Configurations.Contracts;
 using MobileDataUsageReminder.DAL.Repository.Contracts;
 using MobileDataUsageReminder.Services.Contracts;
 
@@ -35,7 +33,7 @@ namespace MobileDataUsageReminder.Components
             var mobileData = await _providerDataUsage.GetMobileData();
 
             // Filter the mobile datas, so we can only keep the new ones
-            var newMobileDatas = await _filterService.FilterNewMobileDatas(mobileData);
+            var newMobileDatas = _filterService.FilterNewMobileDatas(mobileData);
 
             if (newMobileDatas.Count > 0)
             {

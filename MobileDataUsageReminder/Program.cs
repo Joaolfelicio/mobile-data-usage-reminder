@@ -19,6 +19,7 @@ using MobileDataUsageReminder.Infrastructure;
 using MobileDataUsageReminder.Infrastructure.Contracts;
 using MobileDataUsageReminder.Scheduler;
 using MobileDataUsageReminder.Services.Contracts;
+using Npgsql;
 using Serilog;
 using ApplicationConfiguration = MobileDataUsageReminder.Configurations.ApplicationConfiguration;
 
@@ -28,6 +29,7 @@ namespace MobileDataUsageReminder
     {
         private static IServiceProvider ServiceProvider { get; set; }
         private static IConfiguration Configuration { get; set; }
+        private static string EnvironmentName { get; set; }
 
         static void Main(string[] args)
         {
@@ -46,12 +48,12 @@ namespace MobileDataUsageReminder
 
         static IConfiguration StartUp()
         {
-            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            EnvironmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
             return new ConfigurationBuilder()
                 .SetBasePath(Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location))
                 .AddJsonFile("appsettings.json", false, true)
-                .AddJsonFile($"appsettings.{environmentName}.json", true, true)
+                .AddJsonFile($"appsettings.{EnvironmentName}.json", true, true)
                 .AddEnvironmentVariables()
                 .Build();
         }
@@ -84,10 +86,36 @@ namespace MobileDataUsageReminder
 
             services.AddLogging(l =>
             {
-                l.AddSerilog(logger: Log.Logger, dispose: true);
+                l.AddSerilog(Log.Logger, true);
             });
 
-            var connectionString = Configuration.GetConnectionString("MobileDataUsageConnectionString");
+            // Setup database connection string
+            string connectionString;
+
+            if (EnvironmentName == "Development")
+            {
+                connectionString = Configuration.GetConnectionString("MobileDataUsageConnectionString");
+            }
+            else
+            {
+                // Get connection string from Heroku Postgresql
+                var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+                var databaseUri = new Uri(databaseUrl ?? string.Empty);
+                var userInfo = databaseUri.UserInfo.Split(':');
+
+                var npgsqlBuilder = new NpgsqlConnectionStringBuilder
+                {
+                    Host = databaseUri.Host,
+                    Port = databaseUri.Port,
+                    Username = userInfo[0],
+                    Password = userInfo[1],
+                    Database = databaseUri.LocalPath.TrimStart('/'),
+                    SslMode = SslMode.Require,
+                    TrustServerCertificate = true
+                };
+
+                connectionString = npgsqlBuilder.ToString();
+            }
 
             services.AddDbContext<MobileDataUsageContext>(options => 
                 options.UseNpgsql(connectionString));

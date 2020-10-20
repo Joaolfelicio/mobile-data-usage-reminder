@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using MobileDataUsageReminder.DAL.Models;
-using MobileDataUsageReminder.Models;
 
 namespace MobileDataUsageReminder.Services.Contracts
 {
