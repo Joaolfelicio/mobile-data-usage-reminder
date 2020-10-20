@@ -6,7 +6,7 @@
 
 [x] Logging
 
-[ ] Test Container Deployment
+[x] Test Container Deployment
 
 [ ] Readme
 
