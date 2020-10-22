@@ -1,33 +1,33 @@
 # MobileDataUsageReminder
 
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
 [![MIT License][license-shield]][license-url]
+
+## TODO:
+- Fix the DbContext issue
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
 - [MobileDataUsageReminder](#mobiledatausagereminder)
+  - [TODO:](#todo)
   - [Table of Contents](#table-of-contents)
   - [About The Project](#about-the-project)
     - [Logical Steps](#logical-steps)
     - [ISP Providers Supported:](#isp-providers-supported)
     - [Built With](#built-with)
-- [TODO BELOW HERE](#todo-below-here)
   - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
+      - [.NET Core 3.1](#net-core-31)
+      - [PostgreSQL](#postgresql)
     - [Installation](#installation)
+      - [EntityFrameWorkCore Migrations](#entityframeworkcore-migrations)
+      - [Telegram Bot](#telegram-bot)
+      - [Appsettings.json](#appsettingsjson)
   - [Usage](#usage)
+    - [Run dotnet core and pgsql](#run-dotnet-core-and-pgsql)
+      - [Run PostgreSQL](#run-postgresql)
   - [Contributing](#contributing)
   - [License](#license)
-  - [Contact](#contact)
-  - [Acknowledgements](#acknowledgements)
 
 
 
@@ -38,9 +38,9 @@ We are used to receive an sms (sent by our ISP provider) when our mobile data is
 
 Unfortunately, seems like the European law that was enforcing this, got drawn back.
 
-That is why I created MobileDataUsageReminder.
+That is why MobileDataUsageReminder *was born*.
 
-In it's Core, it's a Job Scheduler, that will start at `6AM` and run each `30min` and will send you a reminder if your data usage percentage has reached a new level (each 10% from 0% to 100%).
+In it's Core, it's a Job Scheduler, that will start at `6AM` and run each `30min` and will send you a reminder if your data usage percentage has reached a new level (each 10%, from 10% to 100%).
 
 ### Logical Steps
 
@@ -48,46 +48,71 @@ The logical steps of the application are the following:
 
 1. Get the mobile data usage by calling the provider's API.
 2. Filter the received mobile data usage by comparing with the reminders sent stored in the database for this month, keep the mobile data usage that hasn't sent in the reminder.
-4. **If** after filtering we have any record, means that the data usage percentage has increased since we sent the last reminder and we will need to send the new reminder, **if not**, the job will exit.
+4. **If** after filtering we have any record, means that the data usage percentage has increased since we sent the last reminder and we will need to send a new reminder, **if not**, the job will exit.
 5. Send the notification via the notification's API.
 6. Update the database by adding a new entry for the reminder sent.
 
 
 ### ISP Providers Supported:
-<!-- TODO -->
+
+- Orange Luxembourg
+
+You can contribute to this list, check the [contribution section](#contributing).
 
 ### Built With
-This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 * [.NET Core](https://dotnet.microsoft.com/)
 * [PostgreSQL](https://www.postgresql.org/)
 * [Quartz.NET](https://www.quartz-scheduler.net/)
 
-<!-- TODO BELOW HERE-->
-# TODO BELOW HERE
-
-<!-- GETTING STARTED -->
 ## Getting Started
-
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
 
+#### .NET Core 3.1
 
-1. .NET Core
-2. Pgsql
+You need to have .NET Core 3.1 SDK version installed.
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
+You can check if you already have it on your machine by running the following command.
+
 ```sh
-npm install npm@latest -g
+dotnet --version --list-sdks
 ```
+
+In the output, you should have something like "`3.1.xxx`", if not, you will need to install it.
+
+You can find the download page [here](https://dotnet.microsoft.com/download/dotnet-core/3.1).
+
+#### PostgreSQL
+
+You need to have PostgreSQL installed.
+
+You can check if you already have it on your machine by running the following command.
+
+```sh
+psql --version
+```
+
+In the output, you should be able to see your pgSQL version, if not, you will need to install it.
+
+You can find the download page [here](https://www.postgresql.org/download/).
+
 
 ### Installation
 
-1. Migrations
-2. Telegram bot
-3. Appsettings.json
+#### EntityFrameWorkCore Migrations
+
+Don't forget that for this step, you need to run your database, you can check how to do it [here](#run-postgresql).
+
+Go to the solution level and run the following command to migrate the database.
+
+```sh
+dotnet ef database update -s .\MobileDataUsageReminder\MobileDataUsageReminder.csproj -p .\MobileDataUsageReminder.Dal\MobileDataUsageReminder.DAL.csproj
+```
+
+#### Telegram Bot
+
+#### Appsettings.json
+
 
 qwerty
 
@@ -105,17 +130,18 @@ npm install
 const API_KEY = 'ENTER YOUR API';
 ```
 
-
-
-<!-- USAGE EXAMPLES -->
 ## Usage
 
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+_For more examples, please refer to the [Documentation](https://example.com)
 
+### Run dotnet core and pgsql
 
-<!-- CONTRIBUTING -->
+#### Run PostgreSQL
+
+https://tableplus.com/blog/2018/10/how-to-start-stop-restart-postgresql-server.html
+
 ## Contributing
 
 <!-- TODO Add providers and notifications gateway -->
@@ -128,40 +154,9 @@ Contributions are what make the open source community such an amazing place to b
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-
-
-<!-- LICENSE -->
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
-
-
-
-<!-- CONTACT -->
-## Contact
-
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
-
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
-
-
-
-<!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Img Shields](https://shields.io)
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Pages](https://pages.github.com)
-* [Animate.css](https://daneden.github.io/animate.css)
-* [Loaders.css](https://connoratherton.com/loaders)
-* [Slick Carousel](https://kenwheeler.github.io/slick)
-* [Smooth Scroll](https://github.com/cferdinandi/smooth-scroll)
-* [Sticky Kit](http://leafo.net/sticky-kit)
-* [JVectorMap](http://jvectormap.com)
-* [Font Awesome](https://fontawesome.com)
-
-
-
 
 
 <!-- MARKDOWN LINKS & IMAGES -->

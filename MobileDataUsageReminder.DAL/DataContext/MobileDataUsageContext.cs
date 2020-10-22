@@ -1,18 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Microsoft.EntityFrameworkCore;
 using MobileDataUsageReminder.DAL.Models;
 
 namespace MobileDataUsageReminder.DAL.DataContext
 {
-    public partial class MobileDataUsageContext : DbContext
+    public class MobileDataUsageContext : DbContext
     {
-        public MobileDataUsageContext()
-        {
-        }
-
         public MobileDataUsageContext(DbContextOptions<MobileDataUsageContext> options)
             : base(options)
-        {
-        }
+        { }
 
         public DbSet<MobileData> MobileData { get; set; }
 

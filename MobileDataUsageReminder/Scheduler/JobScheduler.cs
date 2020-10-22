@@ -44,10 +44,14 @@ namespace MobileDataUsageReminder.Scheduler
                 var trigger = TriggerBuilder.Create()
                     .WithIdentity("MobileDataUsageReminderTrigger", "MobileDataUsageReminderJob")
                     .StartNow()
-                    .WithDailyTimeIntervalSchedule(x => x
-                        .WithIntervalInMinutes(30)
-                        .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(6, 0))
-                        .OnEveryDay())
+                    //TODO: PROD
+                    //.WithDailyTimeIntervalSchedule(x => x
+                    //    .WithIntervalInMinutes(30)
+                    //    .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(6, 0))
+                    //    .OnEveryDay())
+                    .WithSimpleSchedule(x => x
+                        .RepeatForever()
+                        .WithIntervalInMinutes(20))
                     .Build();
 
                 // Tell quartz to schedule the job using our trigger
