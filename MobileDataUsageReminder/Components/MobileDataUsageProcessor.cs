@@ -39,11 +39,11 @@ namespace MobileDataUsageReminder.Components
             {
                 _logger.LogInformation($"There are {newMobileDatas.Count} reminders to be sent");
 
-                // Update the db with the reminders that are going to be sent
-                await _mobileDataRepository.CreateMobileDatas(newMobileDatas);
-
                 // Send reminder via reminder service
                 await _reminderService.SendReminder(newMobileDatas);
+
+                // Update the db with the reminders that are going to be sent
+                await _mobileDataRepository.CreateMobileDatas(newMobileDatas);
             }
             else
             {

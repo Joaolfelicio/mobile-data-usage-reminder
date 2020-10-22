@@ -47,10 +47,11 @@ In it's Core, it's a Job Scheduler, that will start at `6AM` and run each `30min
 The logical steps of the application are the following:
 
 1. Get the mobile data usage by calling the provider's API.
-2. Filter the received mobile data usage by comparing with what we have in the database, we only keep the data usage that for the current month and for the mobile phone number, has a different data used percentage from what we found on the DB (so we know that we haven't sent a reminder for that %). 
-3. **If** after filtering we have any record, means that the data usage percentage has increased since we sent the last reminder and we will need to send the new reminder, **if not**, the job will exit.
-4. Update the database by adding a new entry for the corresponding month, phone number and the current data used percentage.
-5. Sill send the notification via telegram's API.
+2. Filter the received mobile data usage by comparing with the reminders sent stored in the database for this month, keep the mobile data usage that hasn't sent in the reminder.
+4. **If** after filtering we have any record, means that the data usage percentage has increased since we sent the last reminder and we will need to send the new reminder, **if not**, the job will exit.
+5. Send the notification via the notification's API.
+6. Update the database by adding a new entry for the reminder sent.
+
 
 ### ISP Providers Supported:
 <!-- TODO -->
@@ -117,7 +118,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- CONTRIBUTING -->
 ## Contributing
 
-<!-- TODO Add providers -->
+<!-- TODO Add providers and notifications gateway -->
 
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
