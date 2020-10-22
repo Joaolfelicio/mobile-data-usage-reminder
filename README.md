@@ -10,8 +10,6 @@
 -->
 [![MIT License][license-shield]][license-url]
 
-<br/>
-
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
