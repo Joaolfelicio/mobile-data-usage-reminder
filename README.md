@@ -20,7 +20,7 @@
       - [.NET Core 3.1](#net-core-31)
       - [PostgreSQL](#postgresql)
     - [Installation](#installation)
-      - [EntityFrameWorkCore Migrations](#entityframeworkcore-migrations)
+      - [EntityFrameworkCore Migrations](#entityframeworkcore-migrations)
       - [Telegram Bot](#telegram-bot)
       - [Appsettings.json](#appsettingsjson)
   - [Usage](#usage)
@@ -99,7 +99,7 @@ You can find the download page [here](https://www.postgresql.org/download/).
 
 ### Installation
 
-#### EntityFrameWorkCore Migrations
+#### EntityFrameworkCore Migrations
 
 Don't forget that for this step, you need to run your database, you can check how to do it [here](#run-postgresql).
 
@@ -108,6 +108,8 @@ Go to the solution level and run the following command to migrate the database.
 ```sh
 dotnet ef database update -s .\MobileDataUsageReminder\MobileDataUsageReminder.csproj -p .\MobileDataUsageReminder.Dal\MobileDataUsageReminder.DAL.csproj
 ```
+
+Entity Framework Core should have created now the database and the required objects.
 
 #### Telegram Bot
 
