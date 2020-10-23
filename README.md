@@ -7,8 +7,6 @@
 - [MobileDataUsageReminder](#mobiledatausagereminder)
   - [Table of Contents](#table-of-contents)
   - [About The Project](#about-the-project)
-    - [Logical Steps](#logical-steps)
-    - [ISP Providers Supported:](#isp-providers-supported)
     - [Built With](#built-with)
   - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
@@ -17,10 +15,14 @@
     - [Installation](#installation)
       - [EntityFrameworkCore Migrations](#entityframeworkcore-migrations)
       - [Telegram Bot](#telegram-bot)
-      - [Appsettings.json](#appsettingsjson)
+      - [AppSettings.json](#appsettingsjson)
+        - [ApplicationConfiguration](#applicationconfiguration)
+        - [TelegramApiConfiguration](#telegramapiconfiguration)
   - [Usage](#usage)
     - [Run dotnet core and pgsql](#run-dotnet-core-and-pgsql)
       - [Run PostgreSQL](#run-postgresql)
+  - [Logical steps of the application](#logical-steps-of-the-application)
+  - [ISP Providers Supported](#isp-providers-supported)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -33,22 +35,6 @@ Unfortunately, seems like the European law that was enforcing this, got drawn ba
 That is why MobileDataUsageReminder *was born*.
 
 In it's Core, it's a Job Scheduler, that will start at `6AM` and run each `30min` and will send you a reminder if your data usage percentage has reached a new level (each 10%, from 10% to 100%).
-
-### Logical Steps
-
-The logical steps of the application are the following:
-
-1. Get the mobile data usage by calling the provider's API.
-2. Filter the received mobile data usage by comparing with the reminders sent stored in the database for this month, keep the mobile data usage that hasn't sent in the reminder.
-4. **If** after filtering we have any record, means that the data usage percentage has increased since we sent the last reminder and we will need to send a new reminder, **if not**, the job will exit.
-5. Send the notification via the notification's API.
-6. Update the database by adding a new entry for the reminder sent.
-
-### ISP Providers Supported:
-
-- Orange Luxembourg
-
-You can contribute to this list, check the [contribution section](#contributing).
 
 ### Built With
 * [.NET Core](https://dotnet.microsoft.com/)
@@ -106,26 +92,51 @@ Entity Framework Core should have created now the database and the required obje
 The application is using the telegram API to deliver the reminders.
 
 You can read this [medium article](https://medium.com/@wk0/send-and-receive-messages-with-the-telegram-api-17de9102ab78) on how to:
-- Create your telegram bot (It's the bot that is going to send the reminders)
-- Get your API Key (You will need when calling the API to send the reminders)
-- The Chat Id (The Id of the user to send the reminder to)
+- **Create your telegram bot** (It's the bot that is going to send the reminders).
+- Get your **API Key** (You will need when calling the API to send the reminders).
+- The **Chat Id(s)** (The Id(s) of the user(s) to send the reminder to).
 
-You need to store the API Key and Chat Id, as he will need to reference it in the [appsettings.json](#appsettingsjson).
+You need to store the API Key and Chat Id(s), as you will need them to reference it in the [appsettings.json](#appsettingsjson).
 
-#### Appsettings.json
+#### AppSettings.json
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-```sh
-git clone https://github.com/your_username_/Project-Name.git
+##### ApplicationConfiguration
+
+In the `ApplicationConfiguration` section of the appSettings, you will need to add the values for the provider email and provider password.
+
+```json
+"ApplicationConfiguration": {
+  "ProviderEmail": "testEmail@test.com",
+  "ProviderPassword": "testPassword"
+}
 ```
-3. Install NPM packages
-```sh
-npm install
-```
-4. Enter your API in `config.js`
-```JS
-const API_KEY = 'ENTER YOUR API';
+
+##### TelegramApiConfiguration
+
+In the `TelegramApiConfiguration`, you need to configure multiple fields for the Telegram Api.
+
+`TelegramUsers` should contain a *array* of users (or a single user) that we should get the reminder for.
+
+- PhoneNumber: The phone number that is going to be used to get the current data usage (it should include the indicative, for example, 352 for Luxembourg).
+- ChatId: The telegram chat id of the user that should get the reminder for this phone number (If you don't have this id, check the [previous section](#telegram-bot)).
+
+`AccessToken` is the Api Key of your telegram bot (If you don't have this api key, check the [previous section](#telegram-bot)).
+
+```json
+"TelegramApiConfiguration": {
+  "TelegramUsers": [
+    {
+      "PhoneNumber": "352123456789",
+      "ChatId": "1231231230"
+    },
+    {
+      "PhoneNumber": "352987654321",
+      "ChatId": "9879879871"
+    }
+  ],
+  "ApiEndPoint": "https://api.telegram.org/bot",
+  "AccessToken": "ApiKey"
+}
 ```
 
 ## Usage
@@ -139,6 +150,22 @@ _For more examples, please refer to the [Documentation](https://example.com)
 #### Run PostgreSQL
 
 https://tableplus.com/blog/2018/10/how-to-start-stop-restart-postgresql-server.html
+
+## Logical steps of the application
+
+The logical steps of the application are the following:
+
+1. Get the mobile data usage by calling the provider's API.
+2. Filter the received mobile data usage by comparing with the reminders sent stored in the database for this month, keep the mobile data usage that hasn't sent in the reminder.
+4. **If** after filtering we have any record, means that the data usage percentage has increased since we sent the last reminder and we will need to send a new reminder, **if not**, the job will exit.
+5. Send the notification via the notification's API.
+6. Update the database by adding a new entry for the reminder sent.
+
+## ISP Providers Supported
+
+- Orange Luxembourg
+
+You can contribute to this list, check the [contribution section](#contributing).
 
 ## Contributing
 
