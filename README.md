@@ -105,9 +105,11 @@ You need to store the API Key and Chat Id(s), as you will need them to reference
 In the `ApplicationConfiguration` section of the appSettings, you will need to add the values for the provider email and provider password.
 
 ```json
-"ApplicationConfiguration": {
-  "ProviderEmail": "testEmail@test.com",
-  "ProviderPassword": "testPassword"
+{
+  "ApplicationConfiguration": {
+    "ProviderEmail": "testEmail@test.com",
+    "ProviderPassword": "testPassword"
+  }
 }
 ```
 
@@ -123,19 +125,21 @@ In the `TelegramApiConfiguration`, you need to configure multiple fields for the
 `AccessToken` is the Api Key of your telegram bot (If you don't have this api key, check the [previous section](#telegram-bot)).
 
 ```json
-"TelegramApiConfiguration": {
-  "TelegramUsers": [
-    {
-      "PhoneNumber": "352123456789",
-      "ChatId": "1231231230"
-    },
-    {
-      "PhoneNumber": "352987654321",
-      "ChatId": "9879879871"
-    }
-  ],
-  "ApiEndPoint": "https://api.telegram.org/bot",
-  "AccessToken": "ApiKey"
+{
+  "TelegramApiConfiguration": {
+    "TelegramUsers": [
+      {
+        "PhoneNumber": "352123456789",
+        "ChatId": "1231231230"
+      },
+      {
+        "PhoneNumber": "352987654321",
+        "ChatId": "9879879871"
+      }
+    ],
+    "ApiEndPoint": "https://api.telegram.org/bot",
+    "AccessToken": "ApiKey"
+  }
 }
 ```
 
