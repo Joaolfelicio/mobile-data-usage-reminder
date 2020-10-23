@@ -2,14 +2,9 @@
 
 [![MIT License][license-shield]][license-url]
 
-## TODO:
-- Fix the DbContext issue
-
-<!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
 - [MobileDataUsageReminder](#mobiledatausagereminder)
-  - [TODO:](#todo)
   - [Table of Contents](#table-of-contents)
   - [About The Project](#about-the-project)
     - [Logical Steps](#logical-steps)
@@ -29,9 +24,6 @@
   - [Contributing](#contributing)
   - [License](#license)
 
-
-
-<!-- ABOUT THE PROJECT -->
 ## About The Project
 
 We are used to receive an sms (sent by our ISP provider) when our mobile data is getting close to our monthly limit, so we avoid going over it and paying an exorbitant amount for an extra GB.
@@ -51,7 +43,6 @@ The logical steps of the application are the following:
 4. **If** after filtering we have any record, means that the data usage percentage has increased since we sent the last reminder and we will need to send a new reminder, **if not**, the job will exit.
 5. Send the notification via the notification's API.
 6. Update the database by adding a new entry for the reminder sent.
-
 
 ### ISP Providers Supported:
 
@@ -96,7 +87,6 @@ In the output, you should be able to see your pgSQL version, if not, you will ne
 
 You can find the download page [here](https://www.postgresql.org/download/).
 
-
 ### Installation
 
 #### EntityFrameworkCore Migrations
@@ -113,10 +103,16 @@ Entity Framework Core should have created now the database and the required obje
 
 #### Telegram Bot
 
+The application is using the telegram API to deliver the reminders.
+
+You can read this [medium article](https://medium.com/@wk0/send-and-receive-messages-with-the-telegram-api-17de9102ab78) on how to:
+- Create your telegram bot (It's the bot that is going to send the reminders)
+- Get your API Key (You will need when calling the API to send the reminders)
+- The Chat Id (The Id of the user to send the reminder to)
+
+You need to store the API Key and Chat Id, as he will need to reference it in the [appsettings.json](#appsettingsjson).
+
 #### Appsettings.json
-
-
-qwerty
 
 1. Get a free API Key at [https://example.com](https://example.com)
 2. Clone the repo
