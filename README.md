@@ -19,8 +19,8 @@
         - [ApplicationConfiguration](#applicationconfiguration)
         - [TelegramApiConfiguration](#telegramapiconfiguration)
   - [Usage](#usage)
-    - [Run dotnet core and pgsql](#run-dotnet-core-and-pgsql)
-      - [Run PostgreSQL](#run-postgresql)
+    - [Run PostgreSQL](#run-postgresql)
+    - [Run .NET Core](#run-net-core)
   - [Logical steps of the application](#logical-steps-of-the-application)
   - [ISP Providers Supported](#isp-providers-supported)
   - [Contributing](#contributing)
@@ -145,15 +145,19 @@ In the `TelegramApiConfiguration`, you need to configure multiple fields for the
 
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+You will need to run postgreSQL and dotnet.
 
-_For more examples, please refer to the [Documentation](https://example.com)
+### Run PostgreSQL
 
-### Run dotnet core and pgsql
+You will need to start your PostgreSQL server, you can follow this [guide](https://tableplus.com/blog/2018/10/how-to-start-stop-restart-postgresql-server.html) on how to do it.
 
-#### Run PostgreSQL
+### Run .NET Core
 
-https://tableplus.com/blog/2018/10/how-to-start-stop-restart-postgresql-server.html
+Run the following command inside the console app folder (`MobileDataUsageReminder`), to start the application.
+
+```sh
+dotnet watch run
+```
 
 ## Logical steps of the application
 
