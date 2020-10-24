@@ -24,6 +24,8 @@
   - [Logical steps of the application](#logical-steps-of-the-application)
   - [ISP Providers Supported](#isp-providers-supported)
   - [Contributing](#contributing)
+    - [Adding a new ISP Provider support](#adding-a-new-isp-provider-support)
+    - [How to contribute](#how-to-contribute)
   - [License](#license)
 
 ## About The Project
@@ -173,7 +175,7 @@ The logical steps of the application are the following:
 
 - Orange Luxembourg
 
-You can contribute to this list, check the [contribution section](#contributing).
+You can contribute to this list, check the [contribution section](#adding-new-isp-providers-support).
 
 ## Contributing
 
@@ -181,10 +183,30 @@ You can contribute to this list, check the [contribution section](#contributing)
 
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
+### Adding a new ISP Provider support
+
+You can increase the list of the supported ISP Providers by implementing the code for the said providers.
+
+You can do this by:
+
+1. Go to `MobileDataUsageReminder/Infrastructure` and implement the  class for the new provider that you wish to add, it should derivate from the `IProviderGateway` contract.
+2. The class for the new provider, because it derive from the `IProviderGateway`, needs to implement four methods:
+   1. Login method
+   2. Get client information method.
+   3. Get mobile data products method.
+   4. Get data usage method.
+3. After creating the new class provider and implementing the methods, you will need to swap the implementation type of the `IProviderGateway` when using the dependency injection in the `Program.cs`.
+    ```csharp
+    .AddScoped<IProviderGateway, TheNewClassProviderGateway>()
+    ```
+4. Now when you run the application, it will fetch all the provider data from the provider gateway that you just added.
+
+### How to contribute
+
 1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+2. Create your Feature Branch (`git checkout -b feature/feature-name`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
+4. Push to the Branch (`git push origin feature/feature-name`)
 5. Open a Pull Request
 
 ## License
