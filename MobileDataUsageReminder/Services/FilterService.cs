@@ -25,14 +25,14 @@ namespace MobileDataUsageReminder.Services
             {
                 var hasReminderSent = _mobileDataRepository.HasReminderAlreadySent(mobileData);
 
-                if (hasReminderSent == false)
+                if (hasReminderSent == false && mobileData.UsedPercentage > 0)
                 {
                     newMobileData.Add(mobileData);
                     _logger.LogInformation($"Reminder will be sent for {mobileData.PhoneNumber}, reached {mobileData.UsedPercentage}% in {mobileData.Month}");
                 }
                 else
                 {
-                    _logger.LogInformation($"Reminder was already sent for {mobileData.PhoneNumber}, reached {mobileData.UsedPercentage}% in {mobileData.Month}");
+                    _logger.LogInformation($"Reminder was already sent for {mobileData.PhoneNumber} or it's at 0%, reached {mobileData.UsedPercentage}% in {mobileData.Month}");
                 }
             }
 

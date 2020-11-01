@@ -55,8 +55,16 @@ namespace MobileDataUsageReminder.Services
                 var chatId = _telegramApiConfiguration.TelegramUsers
                     .First(x => x.PhoneNumber == dataProduct.PhoneNumber).ChatId;
 
-                var truncatedUsedAmount =
-                    dataUsage.UsedAmount.Substring(0, dataUsage.UsedAmount.IndexOf(".", StringComparison.Ordinal));
+                string truncatedUsedAmount;
+
+                if (dataUsage.UsedAmount.Contains("."))
+                {
+                    truncatedUsedAmount = dataUsage.UsedAmount.Substring(0, dataUsage.UsedAmount.IndexOf(".", StringComparison.Ordinal));
+                }
+                else
+                {
+                    truncatedUsedAmount = dataUsage.UsedAmount;
+                }
 
                 var usedPercentage = int.Parse(truncatedUsedAmount) * 100 / int.Parse(dataUsage.InitialAmount);
 
