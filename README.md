@@ -104,7 +104,7 @@ You need to store the API Key and Chat Id(s), as you will need them to reference
 
 ##### ApplicationConfiguration
 
-In the `ApplicationConfiguration` section of the appSettings, you will need to add the values for the provider email and provider password.
+In the `ApplicationConfiguration` section of the appSettings, you will need to add the values for the provider email and provider password. **The password will ONLY be used to login into the provider, it won't be saved or used anywhere else.**
 
 ```json
 {
