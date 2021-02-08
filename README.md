@@ -30,7 +30,7 @@
 
 ## About The Project
 
-We are used to receive an sms (sent by our ISP provider) when our mobile data is getting close to our monthly limit, so we avoid going over it and paying an exorbitant amount for an extra GB.
+We are used to receive a mobile message (sent by our ISP provider) when our mobile data is getting close to our monthly limit, so we avoid going over it and paying an exorbitant amount for an extra GB.
 
 Unfortunately, seems like the European law that was enforcing this, got drawn back.
 
