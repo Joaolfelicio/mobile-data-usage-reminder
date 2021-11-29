@@ -27,6 +27,7 @@ namespace MobileDataUsageReminder.DAL.Repository
             return _context.MobileData
                 .AsEnumerable()
                 .Any(x => x.Month == DateTime.Now.ToString("MMMM") &&
+                          x.Year == DateTime.Now.Year &&
                           x.PhoneNumber == mobileData.PhoneNumber &&
                           x.UsedPercentage == mobileData.UsedPercentage);
         }

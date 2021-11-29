@@ -41,18 +41,25 @@ namespace MobileDataUsageReminder.Scheduler
                     .Build();
 
                 // Trigger the job to run now and then repeat every x minutes
-                var trigger = TriggerBuilder.Create()
+                var triggerConfig = TriggerBuilder.Create()
                     .WithIdentity("MobileDataUsageReminderTrigger", "MobileDataUsageReminderJob")
-                    .StartNow()
-                    //TODO: PROD
-                    //.WithDailyTimeIntervalSchedule(x => x
-                    //    .WithIntervalInMinutes(30)
-                    //    .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(6, 0))
-                    //    .OnEveryDay())
-                    .WithSimpleSchedule(x => x
+                    .StartNow();
+
+                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+                {
+                    triggerConfig.WithSimpleSchedule(x => x
                         .RepeatForever()
-                        .WithIntervalInMinutes(20))
-                    .Build();
+                        .WithIntervalInSeconds(20));
+                }
+                else
+                {
+                    triggerConfig.WithDailyTimeIntervalSchedule(x => x
+                        .WithIntervalInMinutes(30)
+                        .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(6, 0))
+                        .OnEveryDay());
+                }
+
+                var trigger = triggerConfig.Build();
 
                 // Tell quartz to schedule the job using our trigger
                 await scheduler.ScheduleJob(job, trigger);
