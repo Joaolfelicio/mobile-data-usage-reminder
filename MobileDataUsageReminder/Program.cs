@@ -117,7 +117,8 @@ namespace MobileDataUsageReminder
                 connectionString = npgsqlBuilder.ToString();
             }
 
-            services.AddDbContext<MobileDataUsageContext>(options => options.UseNpgsql(connectionString));
+            services.AddDbContext<MobileDataUsageContext>(options => options.UseNpgsql(connectionString, builder => 
+                builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null)));
         }
     }
 }
