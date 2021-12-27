@@ -74,9 +74,7 @@ namespace MobileDataUsageReminder
                 .AddSingleton<ITelegramApiConfiguration>(sp =>
                     sp.GetRequiredService<IOptions<TelegramApiConfiguration>>().Value)
                 .AddScoped<IMobileDataUsageProcessor, MobileDataUsageProcessor>()
-                .AddScoped<IProviderDataUsage, OrangeDataUsage>()
-                .AddScoped<IProviderGateway, OrangeGateway>()
-                .AddScoped<IReminderGateway, TelegramGateway>()
+                .AddScoped<IProviderDataUsage, OrangeDataUsageService>()
                 .AddScoped<IOrangeConstants, OrangeConstants>()
                 .AddScoped<IOrangeEndpoints, OrangeEndpoints>()
                 .AddScoped<IFilterService, FilterService>()
@@ -84,19 +82,18 @@ namespace MobileDataUsageReminder
                 .AddScoped<IMobileDataRepository, MobileDataRepository>()
                 .AddScoped<DataUsageReminderJob>();
 
+            services.AddHttpClient<IReminderGateway, TelegramGateway>();
+            services.AddHttpClient<IProviderGateway, OrangeGateway>();
+
             services.AddLogging(l =>
             {
                 l.AddSerilog(Log.Logger, true);
             });
 
             // Setup database connection string
-            string connectionString;
+            string connectionString = Configuration.GetConnectionString("MobileDataUsageConnectionString");
 
-            if (EnvironmentName == "Development")
-            {
-                connectionString = Configuration.GetConnectionString("MobileDataUsageConnectionString");
-            }
-            else
+            if (EnvironmentName != "Development" && string.IsNullOrWhiteSpace(connectionString))
             {
                 // Get connection string from Heroku Postgresql
                 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");

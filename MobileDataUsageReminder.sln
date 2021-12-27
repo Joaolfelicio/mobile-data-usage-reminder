@@ -1,13 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29806.167
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MobileDataUsageReminder", "MobileDataUsageReminder\MobileDataUsageReminder.csproj", "{60E31460-D197-4852-B35E-9D6A196B5D7E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{47B88E51-3D72-431E-A60D-9F70F5A56D2C}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobileDataUsageReminder.DAL", "MobileDataUsageReminder.DAL\MobileDataUsageReminder.DAL.csproj", "{7BD4554A-FEDD-440B-8C6F-61F4D429F738}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MobileDataUsageReminder.DAL", "MobileDataUsageReminder.DAL\MobileDataUsageReminder.DAL.csproj", "{7BD4554A-FEDD-440B-8C6F-61F4D429F738}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MobileDataUsageReminder.Tests", "MobileDataUsageReminder.Tests\MobileDataUsageReminder.Tests.csproj", "{42EE9EAC-4139-4FD2-8A06-1B37EDEEE0C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +28,10 @@ Global
 		{7BD4554A-FEDD-440B-8C6F-61F4D429F738}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BD4554A-FEDD-440B-8C6F-61F4D429F738}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BD4554A-FEDD-440B-8C6F-61F4D429F738}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42EE9EAC-4139-4FD2-8A06-1B37EDEEE0C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42EE9EAC-4139-4FD2-8A06-1B37EDEEE0C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42EE9EAC-4139-4FD2-8A06-1B37EDEEE0C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42EE9EAC-4139-4FD2-8A06-1B37EDEEE0C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

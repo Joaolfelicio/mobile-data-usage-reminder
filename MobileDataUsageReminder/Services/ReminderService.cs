@@ -14,6 +14,7 @@ namespace MobileDataUsageReminder.Services
         {
             _reminderGateway = reminderGateway;
         }
+
         /// <summary>
         /// Sends the reminder.
         /// </summary>
