@@ -58,6 +58,11 @@ jobs:
         username: ${{ secrets.HEROKUCONFIG_EMAIL }}
         password: ${{ secrets.HEROKUCONFIG_TOKEN }}
 
+    - name: Login to Heroku
+      env: 
+        HEROKU_API_KEY: ${{ secrets.HEROKUCONFIG_TOKEN }}
+      run: heroku container:login 
+
     - name: Build and push to Heroku Registry
       uses: docker/build-push-action@v2
       with:
