@@ -15,12 +15,15 @@ namespace MobileDataUsageReminder.Infrastructure
     {
         private readonly ITelegramApiConfiguration _telegramApiConfiguration;
         private readonly ILogger<ITelegramApiConfiguration> _logger;
+        private readonly HttpClient _httpClient;
 
         public TelegramGateway(ITelegramApiConfiguration telegramApiConfiguration,
-            ILogger<ITelegramApiConfiguration> logger)
+            ILogger<ITelegramApiConfiguration> logger,
+            HttpClient httpClient)
         {
             _telegramApiConfiguration = telegramApiConfiguration;
             _logger = logger;
+            _httpClient = httpClient;
         }
 
         /// <summary>
@@ -39,22 +42,19 @@ namespace MobileDataUsageReminder.Infrastructure
             };
 
             var data = ConvertToJsonData(reminder);
-
             var urlTelegramMessage = _telegramApiConfiguration.ApiEndPoint + _telegramApiConfiguration.AccessToken + "/sendMessage";
 
-            using (var httpClient = new HttpClient())
-            {
-                var result = await httpClient.PostAsync(urlTelegramMessage, data);
+            var result = await _httpClient.PostAsync(urlTelegramMessage, data);
 
-                if (result.IsSuccessStatusCode)
-                {
-                    _logger.LogInformation($"Successfully sent reminder to {mobileData.PhoneNumber}");
-                }
-                else
-                {
-                    _logger.LogInformation($"Failed to send reminder to {mobileData.PhoneNumber}, reason: {result.ReasonPhrase}");
-                }
+            if (result.IsSuccessStatusCode)
+            {
+                _logger.LogInformation($"Successfully sent reminder to {mobileData.PhoneNumber}");
             }
+            else
+            {
+                _logger.LogInformation($"Failed to send reminder to {mobileData.PhoneNumber}, reason: {result.ReasonPhrase}");
+            }
+
         }
 
 

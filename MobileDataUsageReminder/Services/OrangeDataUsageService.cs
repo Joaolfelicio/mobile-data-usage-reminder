@@ -6,20 +6,21 @@ using Microsoft.Extensions.Logging;
 using MobileDataUsageReminder.Configurations.Contracts;
 using MobileDataUsageReminder.DAL.Models;
 using MobileDataUsageReminder.Infrastructure.Contracts;
+using MobileDataUsageReminder.Models;
 using MobileDataUsageReminder.Services.Contracts;
 
 
 namespace MobileDataUsageReminder.Services
 {
-    class OrangeDataUsage : IProviderDataUsage
+    public class OrangeDataUsageService : IProviderDataUsage
     {
         private readonly IApplicationConfiguration _applicationConfiguration;
-        private readonly ILogger<OrangeDataUsage> _logger;
+        private readonly ILogger<OrangeDataUsageService> _logger;
         private readonly IProviderGateway _providerGateway;
         private readonly ITelegramApiConfiguration _telegramApiConfiguration;
 
-        public OrangeDataUsage(IApplicationConfiguration applicationConfiguration,
-                               ILogger<OrangeDataUsage> logger,
+        public OrangeDataUsageService(IApplicationConfiguration applicationConfiguration,
+                               ILogger<OrangeDataUsageService> logger,
                                IProviderGateway providerGateway,
                                ITelegramApiConfiguration telegramApiConfiguration)
         {
@@ -55,38 +56,44 @@ namespace MobileDataUsageReminder.Services
                 var chatId = _telegramApiConfiguration.TelegramUsers
                     .First(x => x.PhoneNumber == dataProduct.PhoneNumber).ChatId;
 
-                string truncatedUsedAmount;
+                var mobileData = MobileDataProjection(dataProduct.PhoneNumber, dataUsage, chatId);
 
-                if (dataUsage.UsedAmount.Contains("."))
-                {
-                    truncatedUsedAmount = dataUsage.UsedAmount.Substring(0, dataUsage.UsedAmount.IndexOf(".", StringComparison.Ordinal));
-                }
-                else
-                {
-                    truncatedUsedAmount = dataUsage.UsedAmount;
-                }
-
-                var usedPercentage = int.Parse(truncatedUsedAmount) * 100 / int.Parse(dataUsage.InitialAmount);
-
-                var roundedUsedPercentage = Convert.ToInt32(Math.Round(usedPercentage / 10.0) * 10);
-
-                mobileDataPackages.Add(new MobileData()
-                {
-                    PhoneNumber = dataProduct.PhoneNumber,
-                    FullDate = DateTime.Now,
-                    Day = DateTime.Now.Day,
-                    Month = DateTime.Now.ToString("MMMM"),
-                    Year = DateTime.Now.Year,
-                    Unit = dataUsage.Unit,
-                    InitialAmount = dataUsage.InitialAmount,
-                    UsedAmount = dataUsage.UsedAmount,
-                    RemainingAmount = dataUsage.RemainingAmount,
-                    ChatId = chatId,
-                    UsedPercentage = roundedUsedPercentage
-                });
+                mobileDataPackages.Add(mobileData);
             }
 
             return mobileDataPackages;
+        }
+
+        private MobileData MobileDataProjection(string phoneNumber, DataUsage dataUsage, string chatId)
+        {
+            string truncatedUsedAmount;
+            if (dataUsage.UsedAmount.Contains("."))
+            {
+                truncatedUsedAmount = dataUsage.UsedAmount[..dataUsage.UsedAmount.IndexOf(".", StringComparison.Ordinal)];
+            }
+            else
+            {
+                truncatedUsedAmount = dataUsage.UsedAmount;
+            }
+
+            var usedPercentage = int.Parse(truncatedUsedAmount) * 100 / int.Parse(dataUsage.InitialAmount);
+
+            var roundedUsedPercentage = Convert.ToInt32(Math.Round(usedPercentage / 10.0, MidpointRounding.AwayFromZero) * 10);
+
+            return new MobileData
+            {
+                PhoneNumber = phoneNumber,
+                FullDate = DateTime.Now,
+                Day = DateTime.Now.Day,
+                Month = DateTime.Now.ToString("MMMM"),
+                Year = DateTime.Now.Year,
+                Unit = dataUsage.Unit,
+                InitialAmount = dataUsage.InitialAmount,
+                UsedAmount = dataUsage.UsedAmount,
+                RemainingAmount = dataUsage.RemainingAmount,
+                ChatId = chatId,
+                UsedPercentage = roundedUsedPercentage
+            };
         }
     }
 }

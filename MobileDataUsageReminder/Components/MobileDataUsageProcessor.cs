@@ -47,7 +47,7 @@ namespace MobileDataUsageReminder.Components
             }
             else
             {
-                _logger.LogInformation($"There are no reminders to be sent");
+                _logger.LogInformation("There are no reminders to be sent");
             }
         }
     }
