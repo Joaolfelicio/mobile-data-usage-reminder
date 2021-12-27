@@ -1,0 +1,67 @@
+name: Build and Deploy Prod
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET 3.1.x
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore
+
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    env:
+      APP_NAME: mobiledatausagereminder
+      TELEGRAMAPICONFING_ENDPOINT: https://api.telegram.org/bot
+      IMAGE_URL: registry.heroku.com/mobiledatausagereminder/worker:latest
+      HEROKU_API_KEY: ${{ secrets.HEROKUCONFIG_TOKEN }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Replace configuration in appsettings
+      uses: microsoft/variable-substitution@v1 
+      with:
+        files: 'MobileDataUsageReminder/appsettings.json'
+      env:
+        ConnectionString.MobileDataUsageConnectionString: ${{ secrets.CONNECTIONSTRING }}
+        ApplicationConfiguration.ProviderEmail: ${{ secrets.APPCONFIG_PROVIDEREMAIL }}
+        ApplicationConfiguration.ProviderPassword: ${{ secrets.APPCONFIG_PROVIDERPASSWORD }}
+        TelegramApiConfiguration.TelegramUsers: ${{ secrets.TELEGRAMAPICONFING_TELEGRAMUSERS }}
+        TelegramApiConfiguration.ApiEndPoint: ${{ env.TELEGRAMAPICONFING_ENDPOINT}}
+        TelegramApiConfiguration.AccessToken: ${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
+
+    - name: Login to Heroku Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: registry.heroku.com
+        username: ${{ secrets.HEROKUCONFIG_EMAIL }}
+        password: ${{ env.HEROKU_API_KEY }}
+
+    - name: Build and push to Heroku Registry
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: ${{ env.IMAGE_URL }}
+
+    - name: Release image to Heroku App
+      run: heroku container:release worker -a ${{ env.APP_NAME }}

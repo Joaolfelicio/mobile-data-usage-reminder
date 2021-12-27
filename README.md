@@ -1,5 +1,5 @@
 # MobileDataUsageReminder
-
+[![Build and Deploy Prod](https://github.com/Joaolfelicio/mobile-data-usage-reminder/actions/workflows/build-deploy.yaml/badge.svg?branch=main)](https://github.com/Joaolfelicio/mobile-data-usage-reminder/actions/workflows/build-deploy.yaml)
 [![MIT License][license-shield]][license-url]
 
 ## Table of Contents
