@@ -91,7 +91,7 @@ namespace MobileDataUsageReminder
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
             services.AddHttpClient<IProviderGateway, OrangeGateway>()
-                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));;
+                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
             services.AddLogging(l =>
             {
