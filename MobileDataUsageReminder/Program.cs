@@ -23,9 +23,6 @@ using Npgsql;
 using Serilog;
 using ApplicationConfiguration = MobileDataUsageReminder.Configurations.ApplicationConfiguration;
 using System.Net.Http;
-using Polly.Extensions.Http;
-using Polly.Contrib.WaitAndRetry;
-using Polly;
 
 namespace MobileDataUsageReminder
 {
