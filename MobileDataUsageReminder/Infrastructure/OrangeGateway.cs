@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using MobileDataUsageReminder.Configurations;
 using MobileDataUsageReminder.Constants.Contracts;
 using MobileDataUsageReminder.Infrastructure.Contracts;
 using MobileDataUsageReminder.Infrastructure.Models;
@@ -32,29 +33,32 @@ namespace MobileDataUsageReminder.Infrastructure
             _httpClient = httpClient;
         }
 
-        public string ClientId { get; private set; }
-
-        /// <summary>
-        /// Login to the provider, will store the TokenValue and the TokenType
-        /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <exception cref="Exception">Failed to login to orange</exception>
-        public async Task Login(string username, string password)
+        public async Task<List<DataUsage>> GetDataUsages(ProviderCredentials providerCredentials, List<TelegramUser> telegramUsers)
         {
-            var loginRequest = new LoginRequest()
-            {
-                Username = username,
-                Password = password
-            };
+            await Login(providerCredentials);
 
-            var data = ConvertToJsonData(loginRequest);
+            var clientId = await GetClientId();
+
+            var dataProducts = await GetMobileDataProducts(telegramUsers, clientId);
+
+            var dataUsages = new List<DataUsage>();
+            foreach (var dataProduct in dataProducts)
+            {
+                var dataUsage = await GetDataUsage(dataProduct, clientId);
+                dataUsages.Add(dataUsage);
+            }
+
+            return dataUsages;
+        }
+
+        private async Task Login(ProviderCredentials providerCredentials)
+        {
+            _httpClient.DefaultRequestHeaders.Clear();
+
+            var data = ConvertToJsonData(providerCredentials);
 
             var response = await _httpClient.PostAsync(_orangeEndpoints.LoginEndpoint, data);
-
             response.EnsureSuccessStatusCode();
-
-            _logger.LogInformation("Successfully logged in into orange.");
 
             var responseString = await response.Content.ReadAsStringAsync();
             var responseData = JsonConvert.DeserializeObject<LoginResult>(responseString);
@@ -62,111 +66,86 @@ namespace MobileDataUsageReminder.Infrastructure
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(responseData.TokenType, responseData.TokenValue);
         }
 
-        /// <summary>
-        /// Get the client details and store the client id
-        /// </summary>
-        /// <exception cref="Exception">Failed to get the client in orange</exception>
-        public async Task GetClient()
+        private async Task<string> GetClientId()
         {
             var response = await _httpClient.GetAsync(_orangeEndpoints.ClientEndpoint);
-
             response.EnsureSuccessStatusCode();
-
-            _logger.LogInformation("Successfully got the client in orange.");
 
             var responseString = await response.Content.ReadAsStringAsync();
             var responseData = JsonConvert.DeserializeObject<ClientResult>(responseString);
 
-            ClientId = responseData.PartyRole.Id;
+            return responseData.PartyRole.Id;
         }
 
-        /// <summary>
-        /// Get the mobile data products by filtering the ones that are related to the data mobile and the phone numbers
-        /// </summary>
-        /// <param name="productsPhoneNumber">The phone numbers to filter the products</param>
-        /// <returns>The data products</returns>
-        public async Task<List<DataProduct>> GetMobileDataProducts(List<string> productsPhoneNumber)
+        private async Task<List<DataProduct>> GetMobileDataProducts(List<TelegramUser> telegramUsers, string clientId)
         {
-            var dataProducts = new List<DataProduct>();
-
-            var response = await _httpClient.GetAsync(_orangeEndpoints.ProductEndpoint(ClientId));
-
+            var response = await _httpClient.GetAsync(_orangeEndpoints.ProductEndpoint(clientId));
             response.EnsureSuccessStatusCode();
-            _logger.LogInformation("Successfully got the products in orange.");
 
             var responseString = await response.Content.ReadAsStringAsync();
             var responseData = JsonConvert.DeserializeObject<ProductsResult>(responseString);
-
-            // Get the products that have the same value for the phone number as passed in the argument
-            var mobileDataProducts = responseData.Products
-                                        .Where(x => x.PackageId == _orangeConstants.PackageId && x.Descriptions
-                                        .Any(y => y.Name == "Phone number" && productsPhoneNumber.Contains(y.CurrentValue.Value)));
-
-            foreach (var responseProduct in mobileDataProducts)
-            {
-                var product = new DataProduct()
-                {
-                    Id = responseProduct.Id,
-                    PackageId = responseProduct.PackageId,
-                };
-
-                product.PhoneNumber = responseProduct.Descriptions
-                                        .Find(x => x.Name == "Phone number" &&
-                                         productsPhoneNumber.Contains(x.CurrentValue.Value))?.CurrentValue.Value;
-
-                dataProducts.Add(product);
-            }
-
+            
+            List<DataProduct> dataProducts = ProjectDataProducts(telegramUsers, responseData);
 
             _logger.LogInformation($"Found {dataProducts.Count} products in orange.");
             return dataProducts;
         }
 
-        /// <summary>
-        /// Gets the data usage for the data product
-        /// </summary>
-        /// <param name="dataProduct"></param>
-        /// <returns>
-        /// The data usage
-        /// </returns>
-        /// <exception cref="Exception">Failed to get the data usage</exception>
-        public async Task<DataUsage> GetDataUsage(DataProduct dataProduct)
+        private async Task<DataUsage> GetDataUsage(DataProduct dataProduct, string clientId)
         {
-            var response = await _httpClient.GetAsync(_orangeEndpoints.DataConsumptionEndpoint(ClientId, dataProduct.Id));
-
+            var response = await _httpClient.GetAsync(_orangeEndpoints.DataConsumptionEndpoint(clientId, dataProduct.Id));
             response.EnsureSuccessStatusCode();
-
-            _logger.LogInformation($"Successfully got the data usage for {dataProduct.PhoneNumber} in orange.");
 
             var responseString = await response.Content.ReadAsStringAsync();
             var responseData = JsonConvert.DeserializeObject<DataConsumptionResult>(responseString);
 
             foreach (var dataConsumption in responseData.DataConsumptions.Where(x => x.Name == _orangeConstants.DataTypeName))
             {
-                return new DataUsage()
+                return new DataUsage
                 {
                     Unit = dataConsumption.Amount.Unit,
                     InitialAmount = dataConsumption.Amount.InitialAmount,
                     UsedAmount = dataConsumption.Amount.UsedAmount,
-                    RemainingAmount = dataConsumption.Amount.RemainingAmount
+                    RemainingAmount = dataConsumption.Amount.RemainingAmount,
+                    TelegramUser = dataProduct.TelegramUser
                 };
             }
 
-            throw new Exception($"Failed to get the data usage for {dataProduct.PhoneNumber} in orange: {response.ReasonPhrase}");
+            throw new Exception($"Failed to get the data usage for {dataProduct.TelegramUser.PhoneNumber} in orange: {response.ReasonPhrase}");
         }
 
+        private List<DataProduct> ProjectDataProducts(List<TelegramUser> telegramUsers, ProductsResult responseData)
+        {
+            // Get the products that have the same value for the phone number as passed in the argument
+            var mobileDataProducts = responseData.Products
+                                        .Where(x => x.PackageId == _orangeConstants.PackageId && x.Descriptions
+                                        .Any(y => y.Name == "Phone number" && telegramUsers.Any(x => x.PhoneNumber == y.CurrentValue.Value)));
 
-        /// <summary>
-        /// Converts to json data.
-        /// </summary>
-        /// <returns>The Json Data.</returns>
+            var dataProducts = new List<DataProduct>();
+            foreach (var responseProduct in mobileDataProducts)
+            {
+                var phoneNumber = responseProduct.Descriptions
+                                        .Find(x => x.Name == "Phone number" &&
+                                         telegramUsers.Any(y => y.PhoneNumber == x.CurrentValue.Value))?.CurrentValue.Value;
+                var chatId = telegramUsers.Find(x => x.PhoneNumber == phoneNumber)?.ChatId;
+
+                var product = new DataProduct()
+                {
+                    Id = responseProduct.Id,
+                    PackageId = responseProduct.PackageId,
+                    TelegramUser = new TelegramUser { PhoneNumber = phoneNumber, ChatId = chatId }
+                };
+                dataProducts.Add(product);
+            }
+
+            return dataProducts;
+        }
+
         private StringContent ConvertToJsonData<T>(T request)
         {
             var requestJson = JsonConvert.SerializeObject(request);
 
-            var data = new StringContent(requestJson, Encoding.UTF8, "application/json");
-
-            return data;
+            return new StringContent(requestJson, Encoding.UTF8, "application/json");
         }
     }
 }

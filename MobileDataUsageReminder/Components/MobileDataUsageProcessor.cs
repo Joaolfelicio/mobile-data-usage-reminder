@@ -8,13 +8,13 @@ namespace MobileDataUsageReminder.Components
 {
     public class MobileDataUsageProcessor : IMobileDataUsageProcessor
     {
-        private readonly IProviderDataUsage _providerDataUsage;
+        private readonly IProviderDataUsageService _providerDataUsage;
         private readonly IReminderService _reminderService;
         private readonly ILogger<MobileDataUsageProcessor> _logger;
         private readonly IMobileDataRepository _mobileDataRepository;
         private readonly IFilterService _filterService;
 
-        public MobileDataUsageProcessor(IProviderDataUsage providerDataUsage,
+        public MobileDataUsageProcessor(IProviderDataUsageService providerDataUsage,
                                         IReminderService reminderService,
                                         ILogger<MobileDataUsageProcessor> logger,
                                         IMobileDataRepository mobileDataRepository,

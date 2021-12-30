@@ -22,6 +22,10 @@ using MobileDataUsageReminder.Services.Contracts;
 using Npgsql;
 using Serilog;
 using ApplicationConfiguration = MobileDataUsageReminder.Configurations.ApplicationConfiguration;
+using System.Net.Http;
+using Polly.Extensions.Http;
+using Polly.Contrib.WaitAndRetry;
+using Polly;
 
 namespace MobileDataUsageReminder
 {
@@ -74,16 +78,20 @@ namespace MobileDataUsageReminder
                 .AddSingleton<ITelegramApiConfiguration>(sp =>
                     sp.GetRequiredService<IOptions<TelegramApiConfiguration>>().Value)
                 .AddScoped<IMobileDataUsageProcessor, MobileDataUsageProcessor>()
-                .AddScoped<IProviderDataUsage, OrangeDataUsageService>()
+                .AddScoped<IProviderDataUsageService, ProviderDataUsageService>()
                 .AddScoped<IOrangeConstants, OrangeConstants>()
                 .AddScoped<IOrangeEndpoints, OrangeEndpoints>()
                 .AddScoped<IFilterService, FilterService>()
                 .AddScoped<IReminderService, ReminderService>()
                 .AddScoped<IMobileDataRepository, MobileDataRepository>()
+                .AddScoped<IMapperService, MapperService>()
                 .AddScoped<DataUsageReminderJob>();
 
-            services.AddHttpClient<IReminderGateway, TelegramGateway>();
-            services.AddHttpClient<IProviderGateway, OrangeGateway>();
+            services.AddHttpClient<IReminderGateway, TelegramGateway>()
+                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
+            services.AddHttpClient<IProviderGateway, OrangeGateway>()
+                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));;
 
             services.AddLogging(l =>
             {

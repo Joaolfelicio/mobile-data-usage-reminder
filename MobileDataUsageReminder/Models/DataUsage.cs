@@ -1,4 +1,6 @@
-﻿namespace MobileDataUsageReminder.Models
+﻿using MobileDataUsageReminder.Configurations;
+
+namespace MobileDataUsageReminder.Models
 {
     public class DataUsage
     {
@@ -6,5 +8,6 @@
         public string InitialAmount { get; set; }
         public string UsedAmount { get; set; }
         public string RemainingAmount { get; set; }
+        public TelegramUser TelegramUser { get; set; }
     }
 }

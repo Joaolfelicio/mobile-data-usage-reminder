@@ -25,7 +25,7 @@ namespace MobileDataUsageReminder.Services
             {
                 var hasReminderSent = _mobileDataRepository.HasReminderAlreadySent(mobileData);
 
-                if (hasReminderSent == false && mobileData.UsedPercentage > 0)
+                if (!hasReminderSent && mobileData.UsedPercentage > 0)
                 {
                     newMobileData.Add(mobileData);
                     _logger.LogInformation($"Reminder will be sent for {mobileData.PhoneNumber}, reached {mobileData.UsedPercentage}% in {mobileData.Month}");
