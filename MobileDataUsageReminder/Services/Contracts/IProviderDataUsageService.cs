@@ -4,7 +4,7 @@ using MobileDataUsageReminder.DAL.Models;
 
 namespace MobileDataUsageReminder.Services.Contracts
 {
-    public interface IProviderDataUsage
+    public interface IProviderDataUsageService
     {
         /// <summary>
         /// Gets the mobile data packages.

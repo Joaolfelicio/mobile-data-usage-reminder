@@ -36,7 +36,7 @@ namespace MobileDataUsageReminder.Infrastructure
             {
                 ChatId = mobileData.ChatId,
                 ParseMode = "HTML",
-                Text = $"Mobile Data Usage Reminder: Your mobile data plan has reached " +
+                Text =  "Mobile Data Usage Reminder: Your mobile data plan has reached " +
                        $"<strong>{mobileData.UsedPercentage}%</strong> of the total of <em>{mobileData.InitialAmount}{mobileData.Unit}</em> " +
                        $"that you have for the month of {mobileData.Month}."
             };
@@ -45,7 +45,6 @@ namespace MobileDataUsageReminder.Infrastructure
             var urlTelegramMessage = _telegramApiConfiguration.ApiEndPoint + _telegramApiConfiguration.AccessToken + "/sendMessage";
 
             var result = await _httpClient.PostAsync(urlTelegramMessage, data);
-
             result.EnsureSuccessStatusCode();
 
             _logger.LogInformation($"Successfully sent reminder to {mobileData.PhoneNumber}");
@@ -59,9 +58,7 @@ namespace MobileDataUsageReminder.Infrastructure
         {
             var messageJson = JsonConvert.SerializeObject(reminder);
 
-            var data = new StringContent(messageJson, Encoding.UTF8, "application/json");
-
-            return data;
+            return new StringContent(messageJson, Encoding.UTF8, "application/json");
         }
     }
 }
