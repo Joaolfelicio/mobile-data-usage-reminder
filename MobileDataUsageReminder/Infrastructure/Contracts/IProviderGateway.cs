@@ -5,11 +5,7 @@ using MobileDataUsageReminder.Models;
 namespace MobileDataUsageReminder.Infrastructure.Contracts
 {
     public interface IProviderGateway
-    {
-
-        public string TokenValue { get; }
-        public string TokenType { get; }
-        
+    {       
         /// <summary>
         /// Provider client Id to send the reminder to
         /// </summary>

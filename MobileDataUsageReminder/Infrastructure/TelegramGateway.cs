@@ -46,15 +46,9 @@ namespace MobileDataUsageReminder.Infrastructure
 
             var result = await _httpClient.PostAsync(urlTelegramMessage, data);
 
-            if (result.IsSuccessStatusCode)
-            {
-                _logger.LogInformation($"Successfully sent reminder to {mobileData.PhoneNumber}");
-            }
-            else
-            {
-                _logger.LogInformation($"Failed to send reminder to {mobileData.PhoneNumber}, reason: {result.ReasonPhrase}");
-            }
+            result.EnsureSuccessStatusCode();
 
+            _logger.LogInformation($"Successfully sent reminder to {mobileData.PhoneNumber}");
         }
 
 

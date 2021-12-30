@@ -31,10 +31,8 @@ namespace MobileDataUsageReminder.Infrastructure
             _logger = logger;
             _httpClient = httpClient;
         }
-        public string TokenValue { get; private set; }
-        public string TokenType { get; private set; }
-        public string ClientId { get; private set; }
 
+        public string ClientId { get; private set; }
 
         /// <summary>
         /// Login to the provider, will store the TokenValue and the TokenType
@@ -54,20 +52,14 @@ namespace MobileDataUsageReminder.Infrastructure
 
             var response = await _httpClient.PostAsync(_orangeEndpoints.LoginEndpoint, data);
 
-            if (response.IsSuccessStatusCode)
-            {
-                _logger.LogInformation("Successfully logged in into orange.");
+            response.EnsureSuccessStatusCode();
 
-                var responseString = await response.Content.ReadAsStringAsync();
-                var responseData = JsonConvert.DeserializeObject<LoginResult>(responseString);
+            _logger.LogInformation("Successfully logged in into orange.");
 
-                TokenType = responseData.TokenType;
-                TokenValue = responseData.TokenValue;
-            }
-            else
-            {
-                throw new Exception($"Failed to login to orange: {response.ReasonPhrase}");
-            }
+            var responseString = await response.Content.ReadAsStringAsync();
+            var responseData = JsonConvert.DeserializeObject<LoginResult>(responseString);
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(responseData.TokenType, responseData.TokenValue);
         }
 
         /// <summary>
@@ -76,23 +68,16 @@ namespace MobileDataUsageReminder.Infrastructure
         /// <exception cref="Exception">Failed to get the client in orange</exception>
         public async Task GetClient()
         {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(TokenType, TokenValue);
-
             var response = await _httpClient.GetAsync(_orangeEndpoints.ClientEndpoint);
 
-            if (response.IsSuccessStatusCode)
-            {
-                _logger.LogInformation("Successfully got the client in orange.");
+            response.EnsureSuccessStatusCode();
 
-                var responseString = await response.Content.ReadAsStringAsync();
-                var responseData = JsonConvert.DeserializeObject<ClientResult>(responseString);
+            _logger.LogInformation("Successfully got the client in orange.");
 
-                ClientId = responseData.PartyRole.Id;
-            }
-            else
-            {
-                throw new Exception($"Failed to get the client in orange: {response.ReasonPhrase}");
-            }
+            var responseString = await response.Content.ReadAsStringAsync();
+            var responseData = JsonConvert.DeserializeObject<ClientResult>(responseString);
+
+            ClientId = responseData.PartyRole.Id;
         }
 
         /// <summary>
@@ -104,41 +89,34 @@ namespace MobileDataUsageReminder.Infrastructure
         {
             var dataProducts = new List<DataProduct>();
 
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(TokenType, TokenValue);
-
             var response = await _httpClient.GetAsync(_orangeEndpoints.ProductEndpoint(ClientId));
 
-            if (response.IsSuccessStatusCode)
+            response.EnsureSuccessStatusCode();
+            _logger.LogInformation("Successfully got the products in orange.");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var responseData = JsonConvert.DeserializeObject<ProductsResult>(responseString);
+
+            // Get the products that have the same value for the phone number as passed in the argument
+            var mobileDataProducts = responseData.Products
+                                        .Where(x => x.PackageId == _orangeConstants.PackageId && x.Descriptions
+                                        .Any(y => y.Name == "Phone number" && productsPhoneNumber.Contains(y.CurrentValue.Value)));
+
+            foreach (var responseProduct in mobileDataProducts)
             {
-                _logger.LogInformation("Successfully got the products in orange.");
-
-                var responseString = await response.Content.ReadAsStringAsync();
-                var responseData = JsonConvert.DeserializeObject<ProductsResult>(responseString);
-
-                // Get the products that have the same value for the phone number as passed in the argument
-                var mobileDataProducts = responseData.Products
-                                            .Where(x => x.PackageId == _orangeConstants.PackageId && x.Descriptions
-                                            .Any(y => y.Name == "Phone number" && productsPhoneNumber.Contains(y.CurrentValue.Value)));
-
-                foreach (var responseProduct in mobileDataProducts)
+                var product = new DataProduct()
                 {
-                    var product = new DataProduct()
-                    {
-                        Id = responseProduct.Id,
-                        PackageId = responseProduct.PackageId,
-                    };
+                    Id = responseProduct.Id,
+                    PackageId = responseProduct.PackageId,
+                };
 
-                    product.PhoneNumber = responseProduct.Descriptions
-                                            .Find(x => x.Name == "Phone number" &&
-                                             productsPhoneNumber.Contains(x.CurrentValue.Value))?.CurrentValue.Value;
+                product.PhoneNumber = responseProduct.Descriptions
+                                        .Find(x => x.Name == "Phone number" &&
+                                         productsPhoneNumber.Contains(x.CurrentValue.Value))?.CurrentValue.Value;
 
-                    dataProducts.Add(product);
-                }
+                dataProducts.Add(product);
             }
-            else
-            {
-                throw new Exception($"Failed to get the products in orange: {response.ReasonPhrase}");
-            }
+
 
             _logger.LogInformation($"Found {dataProducts.Count} products in orange.");
             return dataProducts;
@@ -154,27 +132,24 @@ namespace MobileDataUsageReminder.Infrastructure
         /// <exception cref="Exception">Failed to get the data usage</exception>
         public async Task<DataUsage> GetDataUsage(DataProduct dataProduct)
         {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(TokenType, TokenValue);
-
             var response = await _httpClient.GetAsync(_orangeEndpoints.DataConsumptionEndpoint(ClientId, dataProduct.Id));
 
-            if (response.IsSuccessStatusCode)
+            response.EnsureSuccessStatusCode();
+
+            _logger.LogInformation($"Successfully got the data usage for {dataProduct.PhoneNumber} in orange.");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var responseData = JsonConvert.DeserializeObject<DataConsumptionResult>(responseString);
+
+            foreach (var dataConsumption in responseData.DataConsumptions.Where(x => x.Name == _orangeConstants.DataTypeName))
             {
-                _logger.LogInformation($"Successfully got the data usage for {dataProduct.PhoneNumber} in orange.");
-
-                var responseString = await response.Content.ReadAsStringAsync();
-                var responseData = JsonConvert.DeserializeObject<DataConsumptionResult>(responseString);
-
-                foreach (var dataConsumption in responseData.DataConsumptions.Where(x => x.Name == _orangeConstants.DataTypeName))
+                return new DataUsage()
                 {
-                    return new DataUsage()
-                    {
-                        Unit = dataConsumption.Amount.Unit,
-                        InitialAmount = dataConsumption.Amount.InitialAmount,
-                        UsedAmount = dataConsumption.Amount.UsedAmount,
-                        RemainingAmount = dataConsumption.Amount.RemainingAmount
-                    };
-                }
+                    Unit = dataConsumption.Amount.Unit,
+                    InitialAmount = dataConsumption.Amount.InitialAmount,
+                    UsedAmount = dataConsumption.Amount.UsedAmount,
+                    RemainingAmount = dataConsumption.Amount.RemainingAmount
+                };
             }
 
             throw new Exception($"Failed to get the data usage for {dataProduct.PhoneNumber} in orange: {response.ReasonPhrase}");
