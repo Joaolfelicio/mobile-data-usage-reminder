@@ -13,7 +13,7 @@ namespace MobileDataUsageReminder.Tests.Components
     [TestClass]
     public class MobileDataUsageProcessorTests
     {
-        private IProviderDataUsage _mockProviderDataUsage;
+        private IProviderDataUsageService _mockProviderDataUsage;
         private IReminderService _mockReminderService;
         private ILogger<MobileDataUsageProcessor> _mockLogger;
         private IMobileDataRepository _mockMobileDataRepository;
@@ -23,7 +23,7 @@ namespace MobileDataUsageReminder.Tests.Components
         [TestInitialize]
         public void TestInitialize()
         {
-            _mockProviderDataUsage = Substitute.For<IProviderDataUsage>();
+            _mockProviderDataUsage = Substitute.For<IProviderDataUsageService>();
             _mockReminderService = Substitute.For<IReminderService>();
             _mockLogger = Substitute.For<ILogger<MobileDataUsageProcessor>>();
             _mockMobileDataRepository = Substitute.For<IMobileDataRepository>();
