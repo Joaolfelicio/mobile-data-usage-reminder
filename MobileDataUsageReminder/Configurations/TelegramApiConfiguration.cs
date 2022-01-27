@@ -9,10 +9,4 @@ namespace MobileDataUsageReminder.Configurations
         public string ApiEndPoint { get; set; }
         public string AccessToken { get; set; }
     }
-
-    public class TelegramUser
-    {
-        public string PhoneNumber { get; set; }
-        public string ChatId { get; set; }
-    }
 }

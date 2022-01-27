@@ -17,7 +17,8 @@ namespace MobileDataUsageReminder.Infrastructure
         private readonly ILogger<ITelegramApiConfiguration> _logger;
         private readonly HttpClient _httpClient;
 
-        public TelegramGateway(ITelegramApiConfiguration telegramApiConfiguration,
+        public TelegramGateway(
+            ITelegramApiConfiguration telegramApiConfiguration,
             ILogger<ITelegramApiConfiguration> logger,
             HttpClient httpClient)
         {
@@ -50,15 +51,10 @@ namespace MobileDataUsageReminder.Infrastructure
             _logger.LogInformation($"Successfully sent reminder to {mobileData.PhoneNumber}");
         }
 
-
         /// <summary>Converts to json data.</summary>
         /// <param name="reminder"></param>
         /// <returns>The Json Data.</returns>
-        private StringContent ConvertToJsonData(Reminder reminder)
-        {
-            var messageJson = JsonConvert.SerializeObject(reminder);
-
-            return new StringContent(messageJson, Encoding.UTF8, "application/json");
-        }
+        private StringContent ConvertToJsonData(Reminder reminder) =>
+            new StringContent(JsonConvert.SerializeObject(reminder), Encoding.UTF8, "application/json");
     }
 }

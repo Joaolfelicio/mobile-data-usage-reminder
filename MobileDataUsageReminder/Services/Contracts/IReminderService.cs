@@ -10,7 +10,6 @@ namespace MobileDataUsageReminder.Services.Contracts
         /// Sends the reminder.
         /// </summary>
         /// <param name="dataUsages">The data usages.</param>
-        /// <returns></returns>
         Task SendReminder(List<MobileData> dataUsages);
     }
 }

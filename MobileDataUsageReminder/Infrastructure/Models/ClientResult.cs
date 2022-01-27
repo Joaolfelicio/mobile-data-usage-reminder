@@ -7,10 +7,4 @@ namespace MobileDataUsageReminder.Infrastructure.Models
         [JsonProperty("partyRole")]
         public PartyRole PartyRole { get; set; }
     }
-
-    public class PartyRole
-    {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-    }
 }

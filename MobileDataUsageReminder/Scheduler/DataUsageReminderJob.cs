@@ -11,8 +11,9 @@ namespace MobileDataUsageReminder.Scheduler
         private readonly IMobileDataUsageProcessor _mobileDataUsageProcessor;
         private readonly ILogger<DataUsageReminderJob> _logger;
 
-        public DataUsageReminderJob(IMobileDataUsageProcessor mobileDataUsageProcessor,
-                                    ILogger<DataUsageReminderJob> logger)
+        public DataUsageReminderJob(
+            IMobileDataUsageProcessor mobileDataUsageProcessor,
+            ILogger<DataUsageReminderJob> logger)
         {
             _mobileDataUsageProcessor = mobileDataUsageProcessor;
             _logger = logger;

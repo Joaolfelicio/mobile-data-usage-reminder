@@ -10,8 +10,6 @@ using MobileDataUsageReminder.Components;
 using MobileDataUsageReminder.Components.Contracts;
 using MobileDataUsageReminder.Configurations;
 using MobileDataUsageReminder.Configurations.Contracts;
-using MobileDataUsageReminder.Constants;
-using MobileDataUsageReminder.Constants.Contracts;
 using MobileDataUsageReminder.DAL.DataContext;
 using MobileDataUsageReminder.DAL.Repository;
 using MobileDataUsageReminder.DAL.Repository.Contracts;
@@ -22,7 +20,8 @@ using MobileDataUsageReminder.Services.Contracts;
 using Npgsql;
 using Serilog;
 using ApplicationConfiguration = MobileDataUsageReminder.Configurations.ApplicationConfiguration;
-using System.Net.Http;
+using MobileDataUsageReminder.Constants.Contracts.Orange;
+using MobileDataUsageReminder.Constants.Orange;
 
 namespace MobileDataUsageReminder
 {
@@ -32,14 +31,15 @@ namespace MobileDataUsageReminder
         private static IConfiguration Configuration { get; set; }
         private static string EnvironmentName { get; set; }
 
-        static void Main(string[] args)
+        static void Main()
         {
             Configuration = StartUp();
 
             StartLogger(Configuration);
 
             var servicesCollection = new ServiceCollection();
-            ConfigureServices(servicesCollection);
+            
+            servicesCollection.ConfigureServices();
 
             ServiceProvider = servicesCollection.BuildServiceProvider();
 
@@ -59,14 +59,12 @@ namespace MobileDataUsageReminder
                 .Build();
         }
 
-        static void StartLogger(IConfiguration configuration)
-        {
+        static void StartLogger(IConfiguration configuration) =>
             Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
-        }
+            .ReadFrom.Configuration(configuration)
+            .CreateLogger();
 
-        static void ConfigureServices(IServiceCollection services)
+        static IServiceCollection ConfigureServices(this IServiceCollection services)
         {
             services.Configure<ApplicationConfiguration>(Configuration.GetSection(nameof(ApplicationConfiguration)))
                 .AddSingleton<IApplicationConfiguration>(sp =>
@@ -119,8 +117,10 @@ namespace MobileDataUsageReminder
                 connectionString = npgsqlBuilder.ToString();
             }
 
-            services.AddDbContext<MobileDataUsageContext>(options => options.UseNpgsql(connectionString, builder => 
+            services.AddDbContext<MobileDataUsageContext>(options => options.UseNpgsql(connectionString, builder =>
                 builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null)));
+
+            return services;
         }
     }
 }
