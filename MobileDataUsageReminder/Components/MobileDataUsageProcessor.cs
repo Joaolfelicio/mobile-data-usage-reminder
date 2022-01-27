@@ -14,11 +14,12 @@ namespace MobileDataUsageReminder.Components
         private readonly IMobileDataRepository _mobileDataRepository;
         private readonly IFilterService _filterService;
 
-        public MobileDataUsageProcessor(IProviderDataUsageService providerDataUsage,
-                                        IReminderService reminderService,
-                                        ILogger<MobileDataUsageProcessor> logger,
-                                        IMobileDataRepository mobileDataRepository,
-                                        IFilterService filterService)
+        public MobileDataUsageProcessor(  
+            IProviderDataUsageService providerDataUsage,
+            IReminderService reminderService,
+            ILogger<MobileDataUsageProcessor> logger,
+            IMobileDataRepository mobileDataRepository,
+            IFilterService filterService)
         {
             _providerDataUsage = providerDataUsage;
             _reminderService = reminderService;
@@ -40,10 +41,12 @@ namespace MobileDataUsageReminder.Components
                 _logger.LogInformation($"There are {newMobileDatas.Count} reminders to be sent");
 
                 // Send reminder via reminder service
-                await _reminderService.SendReminder(newMobileDatas);
+                var reminderTask = _reminderService.SendReminder(newMobileDatas);
 
                 // Update the db with the reminders that are going to be sent
-                await _mobileDataRepository.CreateMobileDatas(newMobileDatas);
+                var createDataTask = _mobileDataRepository.CreateMobileDatas(newMobileDatas);
+
+                Task.WaitAll(reminderTask, createDataTask);
             }
             else
             {

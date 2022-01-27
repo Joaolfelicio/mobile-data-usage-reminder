@@ -6,7 +6,7 @@ namespace MobileDataUsageReminder.DAL.Repository.Contracts
 {
     public interface IMobileDataRepository
     {
-        bool HasReminderAlreadySent(MobileData mobileData);
+        bool WasReminderAlreadySent(MobileData mobileData);
 
         Task CreateMobileDatas(List<MobileData> mobileDatas);
     }

@@ -11,19 +11,21 @@ namespace MobileDataUsageReminder.Services
         private readonly IMobileDataRepository _mobileDataRepository;
         private readonly ILogger<FilterService> _logger;
 
-        public FilterService(IMobileDataRepository mobileDataRepository,
+        public FilterService(
+            IMobileDataRepository mobileDataRepository,
             ILogger<FilterService> logger)
         {
             _mobileDataRepository = mobileDataRepository;
             _logger = logger;
         }
+
         public List<MobileData> FilterNewMobileDatas(List<MobileData> mobileDatas)
         {
             var newMobileData = new List<MobileData>();
 
             foreach (var mobileData in mobileDatas)
             {
-                var hasReminderSent = _mobileDataRepository.HasReminderAlreadySent(mobileData);
+                var hasReminderSent = _mobileDataRepository.WasReminderAlreadySent(mobileData);
 
                 if (!hasReminderSent && mobileData.UsedPercentage > 0)
                 {

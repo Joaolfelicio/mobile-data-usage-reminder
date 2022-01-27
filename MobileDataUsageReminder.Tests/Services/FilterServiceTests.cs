@@ -28,7 +28,7 @@ namespace MobileDataUsageReminder.Tests.Services
         [TestMethod]
         public void Filtering_MobileData_Should_ReturnThemIfTheReminderWasAlreadySent_And_TheUsedPercentageIsAboveZero()
         {
-            _mockRepository.HasReminderAlreadySent(Arg.Any<MobileData>()).Returns(false);
+            _mockRepository.WasReminderAlreadySent(Arg.Any<MobileData>()).Returns(false);
 
             var mobileDatas = new List<MobileData>()
             {
@@ -45,7 +45,7 @@ namespace MobileDataUsageReminder.Tests.Services
         [TestMethod]
         public void Filtering_MobileData_Shouldnt_ReturnThemIfTheUsedPercentageIsBelowOrEqualToZero()
         {
-            _mockRepository.HasReminderAlreadySent(Arg.Any<MobileData>()).Returns(false);
+            _mockRepository.WasReminderAlreadySent(Arg.Any<MobileData>()).Returns(false);
 
             var mobileDatas = new List<MobileData>()
             {
@@ -62,11 +62,11 @@ namespace MobileDataUsageReminder.Tests.Services
         [TestMethod]
         public void Filtering_MobileData_ShouldReturn_OnlyTheOnesThatWereNotSentYet()
         {
-            var sentMobileDataId = 1;
-            var notSentMobileDataId = 2;
+            const int sentMobileDataId = 1;
+            const int notSentMobileDataId = 2;
 
-            _mockRepository.HasReminderAlreadySent(Arg.Any<MobileData>()).Returns(false);
-            _mockRepository.HasReminderAlreadySent(Arg.Is<MobileData>(x => x.Id == sentMobileDataId)).Returns(true);
+            _mockRepository.WasReminderAlreadySent(Arg.Any<MobileData>()).Returns(false);
+            _mockRepository.WasReminderAlreadySent(Arg.Is<MobileData>(x => x.Id == sentMobileDataId)).Returns(true);
 
             var mobileDatas = new List<MobileData>()
             {

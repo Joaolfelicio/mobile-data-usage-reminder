@@ -29,8 +29,12 @@ namespace MobileDataUsageReminder.Tests.Components
             _mockMobileDataRepository = Substitute.For<IMobileDataRepository>();
             _mockFilterService = Substitute.For<IFilterService>();
 
-            _mobileDataUsageProcessor = new MobileDataUsageProcessor(_mockProviderDataUsage, _mockReminderService, 
-                                                                     _mockLogger, _mockMobileDataRepository, _mockFilterService);
+            _mobileDataUsageProcessor = new MobileDataUsageProcessor(
+                _mockProviderDataUsage,
+                _mockReminderService,
+                _mockLogger,
+                _mockMobileDataRepository,
+                _mockFilterService);
         }
 
         [TestMethod]

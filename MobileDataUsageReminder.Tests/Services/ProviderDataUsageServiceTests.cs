@@ -36,7 +36,11 @@ namespace MobileDataUsageReminder.Tests.Services
 
             _mockTelegramApiConfiguration = new TelegramApiConfiguration { TelegramUsers = telegramUsers };
 
-            _providerDataUsageService = new ProviderDataUsageService(_mockApplicationConfiguration, _mockProviderGateway, _mockTelegramApiConfiguration, _mockMapperService);
+            _providerDataUsageService = new ProviderDataUsageService(
+                _mockApplicationConfiguration,
+                _mockProviderGateway,
+                _mockTelegramApiConfiguration,
+                _mockMapperService);
         }
 
         [TestMethod]

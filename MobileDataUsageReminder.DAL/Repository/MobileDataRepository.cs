@@ -14,14 +14,15 @@ namespace MobileDataUsageReminder.DAL.Repository
         private readonly MobileDataUsageContext _context;
         private readonly ILogger<MobileDataRepository> _logger;
 
-        public MobileDataRepository(MobileDataUsageContext context,
+        public MobileDataRepository(
+            MobileDataUsageContext context,
             ILogger<MobileDataRepository> logger)
         {
             _context = context;
             _logger = logger;
         }
 
-        public bool HasReminderAlreadySent(MobileData mobileData)
+        public bool WasReminderAlreadySent(MobileData mobileData)
         {
             // Are there any mobile datas for the same month, with the same phone number and used %?
             return _context.MobileData

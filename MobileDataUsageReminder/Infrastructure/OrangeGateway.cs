@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MobileDataUsageReminder.Configurations;
-using MobileDataUsageReminder.Constants.Contracts;
+using MobileDataUsageReminder.Constants.Contracts.Orange;
 using MobileDataUsageReminder.Infrastructure.Contracts;
 using MobileDataUsageReminder.Infrastructure.Models;
 using MobileDataUsageReminder.Models;
@@ -22,7 +22,8 @@ namespace MobileDataUsageReminder.Infrastructure
         private readonly ILogger<OrangeGateway> _logger;
         private readonly HttpClient _httpClient;
 
-        public OrangeGateway(IOrangeEndpoints orangeEndpoints,
+        public OrangeGateway(
+            IOrangeEndpoints orangeEndpoints,
             IOrangeConstants orangeConstants,
             ILogger<OrangeGateway> logger,
             HttpClient httpClient)
@@ -84,7 +85,7 @@ namespace MobileDataUsageReminder.Infrastructure
 
             var responseString = await response.Content.ReadAsStringAsync();
             var responseData = JsonConvert.DeserializeObject<ProductsResult>(responseString);
-            
+
             List<DataProduct> dataProducts = ProjectDataProducts(telegramUsers, responseData);
 
             _logger.LogInformation($"Found {dataProducts.Count} products in orange.");
@@ -99,37 +100,37 @@ namespace MobileDataUsageReminder.Infrastructure
             var responseString = await response.Content.ReadAsStringAsync();
             var responseData = JsonConvert.DeserializeObject<DataConsumptionResult>(responseString);
 
-            foreach (var dataConsumption in responseData.DataConsumptions.Where(x => x.Name == _orangeConstants.DataTypeName))
-            {
-                return new DataUsage
-                {
-                    Unit = dataConsumption.Amount.Unit,
-                    InitialAmount = dataConsumption.Amount.InitialAmount,
-                    UsedAmount = dataConsumption.Amount.UsedAmount,
-                    RemainingAmount = dataConsumption.Amount.RemainingAmount,
-                    TelegramUser = dataProduct.TelegramUser
-                };
-            }
+            var dataConsumption = responseData.DataConsumptions.Find(x => x.Name == _orangeConstants.DataTypeName);
 
-            throw new Exception($"Failed to get the data usage for {dataProduct.TelegramUser.PhoneNumber} in orange: {response.ReasonPhrase}");
+            _ = dataConsumption ?? throw new Exception($"Failed to get the data usage for {dataProduct.TelegramUser.PhoneNumber} in orange: {response.ReasonPhrase}");
+
+            return new DataUsage
+            {
+                Unit = dataConsumption.Amount.Unit,
+                InitialAmount = dataConsumption.Amount.InitialAmount,
+                UsedAmount = dataConsumption.Amount.UsedAmount,
+                RemainingAmount = dataConsumption.Amount.RemainingAmount,
+                TelegramUser = dataProduct.TelegramUser
+            };
         }
 
         private List<DataProduct> ProjectDataProducts(List<TelegramUser> telegramUsers, ProductsResult responseData)
         {
             // Get the products that have the same value for the phone number as passed in the argument
             var mobileDataProducts = responseData.Products
-                                        .Where(x => x.PackageId == _orangeConstants.PackageId && x.Descriptions
-                                        .Any(y => y.Name == "Phone number" && telegramUsers.Any(x => x.PhoneNumber == y.CurrentValue.Value)));
+                .Where(x => x.PackageId == _orangeConstants.PackageId && x.Descriptions
+                .Any(y => y.Name == "Phone number" && telegramUsers.Any(x => x.PhoneNumber == y.CurrentValue.Value)));
 
             var dataProducts = new List<DataProduct>();
             foreach (var responseProduct in mobileDataProducts)
             {
                 var phoneNumber = responseProduct.Descriptions
-                                        .Find(x => x.Name == "Phone number" &&
-                                         telegramUsers.Any(y => y.PhoneNumber == x.CurrentValue.Value))?.CurrentValue.Value;
+                    .Find(x => x.Name == "Phone number" &&
+                        telegramUsers.Any(y => y.PhoneNumber == x.CurrentValue.Value))?.CurrentValue.Value;
+
                 var chatId = telegramUsers.Find(x => x.PhoneNumber == phoneNumber)?.ChatId;
 
-                var product = new DataProduct()
+                var product = new DataProduct
                 {
                     Id = responseProduct.Id,
                     PackageId = responseProduct.PackageId,
@@ -141,11 +142,7 @@ namespace MobileDataUsageReminder.Infrastructure
             return dataProducts;
         }
 
-        private StringContent ConvertToJsonData<T>(T request)
-        {
-            var requestJson = JsonConvert.SerializeObject(request);
-
-            return new StringContent(requestJson, Encoding.UTF8, "application/json");
-        }
+        private StringContent ConvertToJsonData<T>(T request) =>
+            new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
     }
 }

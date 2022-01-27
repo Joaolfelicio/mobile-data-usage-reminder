@@ -14,10 +14,8 @@ namespace MobileDataUsageReminder.Scheduler
             _serviceProvider = serviceProvider;
         }
 
-        public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler)
-        {
-            return _serviceProvider.GetRequiredService<DataUsageReminderJob>();
-        }
+        public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler) =>
+            _serviceProvider.GetRequiredService<DataUsageReminderJob>();
 
         public void ReturnJob(IJob job)
         {

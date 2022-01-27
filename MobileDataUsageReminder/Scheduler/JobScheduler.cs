@@ -15,6 +15,7 @@ namespace MobileDataUsageReminder.Scheduler
         {
             _serviceProvider = serviceProvider;
         }
+
         public async Task Run()
         {
             try
@@ -76,5 +77,4 @@ namespace MobileDataUsageReminder.Scheduler
             }
         }
     }
-
 }

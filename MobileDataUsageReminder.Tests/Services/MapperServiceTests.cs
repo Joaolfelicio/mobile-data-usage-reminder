@@ -1,16 +1,7 @@
 ﻿using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MobileDataUsageReminder.Configurations;
-using MobileDataUsageReminder.Configurations.Contracts;
-using MobileDataUsageReminder.Infrastructure.Contracts;
 using MobileDataUsageReminder.Models;
 using MobileDataUsageReminder.Services;
-using MobileDataUsageReminder.Services.Contracts;
-using NSubstitute;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MobileDataUsageReminder.Tests.Services
 {
