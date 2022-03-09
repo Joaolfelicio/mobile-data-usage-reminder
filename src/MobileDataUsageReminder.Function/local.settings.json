@@ -2,6 +2,13 @@
     "IsEncrypted": false,
     "Values": {
         "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-        "FUNCTIONS_WORKER_RUNTIME": "dotnet"
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+        "ConnectionStrings:MobileDataUsageConnectionString": "",
+        "ApplicationConfiguration:ProviderEmail": "",
+        "ApplicationConfiguration:ProviderPassword": "",
+        //TODO: Figure this out
+        "TelegramApiConfiguration:TelegramUsers": [""],
+        "TelegramApiConfiguration:ApiEndPoint": "",
+        "TelegramApiConfiguration:AccessToken": ""
     }
 }

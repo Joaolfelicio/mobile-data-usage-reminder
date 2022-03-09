@@ -17,24 +17,17 @@ public class TelegramGateway : INotificationGateway
         _httpClient = httpClient;
     }
 
-    /// <summary>
-    /// Sends the post to API reminder.
-    /// </summary>
-    /// <param name="mobileData">The mobile data package.</param>
     public async Task SendNotification(MobileData mobileData)
     {
-        var reminder = new TelegramReminder
-        {
-            ChatId = mobileData.ChatId,
-            ParseMode = "HTML",
-            Text = "Mobile Data Usage Reminder: Your mobile data plan has reached " +
+        var notificationMessage = "Mobile Data Usage Reminder: Your mobile data plan has reached " +
                    $"<strong>{mobileData.UsedPercentage}%</strong> of the total of <em>{mobileData.InitialAmount}{mobileData.Unit}</em> " +
-                   $"that you have for the month of {mobileData.Month}."
-        };
+                   $"that you have for the month of {mobileData.Month}.";
+
+        var reminder = new TelegramReminder(mobileData.ChatId, "HTML", notificationMessage);
 
         var urlTelegramMessage = $"{_telegramApiConfiguration.ApiEndPoint}+{_telegramApiConfiguration.AccessToken}/sendMessage";
 
-        var result = await _httpClient.PostAsJsonAsync(urlTelegramMessage, reminder);
+        var result = await _httpClient.PostAsJsonAsync(urlTelegramMessage, reminder, TelegramReminderContext.Default.TelegramReminder);
         result.EnsureSuccessStatusCode();
 
         _logger.LogInformation("Successfully sent reminder to {phone number}", mobileData.PhoneNumber);

@@ -1,9 +1,6 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
-public class LoginResult
-{
-    [JsonPropertyName("token_type")]
-    public string TokenType { get; init; }
-    [JsonPropertyName("access_token")]
-    public string TokenValue { get; init; }
-}
+internal record LoginResult([property:JsonPropertyName("token_type")] string TokenType, [property:JsonPropertyName("access_token")] string TokenValue);
+
+[JsonSerializable(typeof(LoginResult))]
+internal partial class LoginResultContext : JsonSerializerContext {}

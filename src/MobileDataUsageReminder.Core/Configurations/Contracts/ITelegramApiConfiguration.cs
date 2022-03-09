@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-public interface ITelegramApiConfiguration
+﻿public interface ITelegramApiConfiguration
 {
     public List<TelegramUser> TelegramUsers { get; set; }
     string ApiEndPoint { get; }

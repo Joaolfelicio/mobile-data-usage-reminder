@@ -16,6 +16,6 @@
             notificationTasks[i] = _notificationGateway.SendNotification(dataUsages[i]);
         }
 
-        Task.WaitAll(notificationTasks);
+        await Task.WhenAll(notificationTasks);
     }
 }

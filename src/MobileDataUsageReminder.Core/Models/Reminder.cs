@@ -1,1 +1,1 @@
-﻿public class Reminder { }
+﻿internal record Reminder { }

@@ -1,8 +1,9 @@
 ﻿
 using System.Text.Json.Serialization;
 
-public class ClientResult
-{
-    [JsonPropertyName("partyRole")]
-    public PartyRole PartyRole { get; init; }
-}
+internal record ClientResult([property:JsonPropertyName("partyRole")] PartyRole PartyRole);
+
+internal record PartyRole([property:JsonPropertyName("id")] string Id);
+
+[JsonSerializable(typeof(ClientResult))]
+internal partial class ClientResultContext : JsonSerializerContext {}

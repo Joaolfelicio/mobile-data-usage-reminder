@@ -39,7 +39,7 @@ public class MobileDataUsageReminderFunction
 
             var createDataTask = _mobileDataRepository.CreateMobileData(newMobileDatas);
 
-            Task.WaitAll(reminderTask, createDataTask);
+            await Task.WhenAll(reminderTask, createDataTask);
         }
         else
         {

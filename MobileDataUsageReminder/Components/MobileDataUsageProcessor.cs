@@ -38,15 +38,14 @@ namespace MobileDataUsageReminder.Components
 
             if (newMobileDatas.Count > 0)
             {
-                _logger.LogInformation($"There are {newMobileDatas.Count} reminders to be sent.");
+                _logger.LogInformation("There are {count} reminders to be sent.", newMobileDatas.Count);
 
-                // Send reminder via reminder service
                 var reminderTask = _reminderService.SendReminder(newMobileDatas);
 
-                // Update the db with the reminders that are going to be sent
+
                 var createDataTask = _mobileDataRepository.CreateMobileDatas(newMobileDatas);
 
-                Task.WaitAll(reminderTask, createDataTask);
+                await Task.WhenAll(reminderTask, createDataTask);
             }
             else
             {

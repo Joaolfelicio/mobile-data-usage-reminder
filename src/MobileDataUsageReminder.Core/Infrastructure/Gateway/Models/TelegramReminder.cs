@@ -1,13 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-public class TelegramReminder : Reminder
-{
-    [JsonPropertyName("chat_id")]
-    public string ChatId { get; init; }
+internal record TelegramReminder([property:JsonPropertyName("chat_id")] string ChatId, [property:JsonPropertyName("text")] string Text, [property:JsonPropertyName("parse_mode")] string ParseMode) : Reminder;
 
-    [JsonPropertyName("text")]
-    public string Text { get; init; }
-
-    [JsonPropertyName("parse_mode")]
-    public string ParseMode { get; init; }
-}
+[JsonSerializable(typeof(TelegramReminder))]
+internal partial class TelegramReminderContext : JsonSerializerContext {}

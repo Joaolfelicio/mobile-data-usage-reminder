@@ -1,7 +1,7 @@
 ﻿public class OrangeEndpoints : IOrangeEndpoints
 {
-    public string LoginEndpoint { get; set; } = "https://client.orange.lu/tum/v2.0/auth/selfcare/login";
-    public string ClientEndpoint { get; set; } = "https://client.orange.lu/tum/v2.0/users/current";
+    public string LoginEndpoint { get; } = "https://client.orange.lu/tum/v2.0/auth/selfcare/login";
+    public string ClientEndpoint { get; } = "https://client.orange.lu/tum/v2.0/users/current";
     public string ProductEndpoint(string clientId) =>
         $"https://client.orange.lu/bssapi/v1/customers/{clientId}/products?state=Active,Suspended,Ordered,Ready%20for%20service&limit=10000";
 
