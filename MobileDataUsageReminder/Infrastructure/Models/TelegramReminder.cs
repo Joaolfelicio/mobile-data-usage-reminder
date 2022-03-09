@@ -1,5 +1,5 @@
 ﻿using MobileDataUsageReminder.Models;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace MobileDataUsageReminder.Infrastructure.Models
 {
@@ -9,21 +9,21 @@ namespace MobileDataUsageReminder.Infrastructure.Models
         /// Gets or sets the chat identifier.
         /// </summary>
         /// <value>The chat identifier.</value>
-        [JsonProperty("chat_id")]
+        [JsonPropertyName("chat_id")]
         public string ChatId { get; set; }
 
         /// <summary>
         /// Gets or sets the text.
         /// </summary>
         /// <value>The text.</value>
-        [JsonProperty("text")]
+        [JsonPropertyName("text")]
         public string Text { get; set; }
 
         /// <summary>
         /// Gets or sets the parse mode for the format.
         /// </summary>
         /// <value>The parse mode.</value>
-        [JsonProperty("parse_mode")]
+        [JsonPropertyName("parse_mode")]
         public string ParseMode { get; set; }
     }
 }

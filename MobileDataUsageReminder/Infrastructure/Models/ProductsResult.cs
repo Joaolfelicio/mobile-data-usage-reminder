@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace MobileDataUsageReminder.Infrastructure.Models
 {
     public class ProductsResult
     {
-        [JsonProperty("results")]
+        [JsonPropertyName("results")]
         public List<Product> Products { get; set; }
     }
 }

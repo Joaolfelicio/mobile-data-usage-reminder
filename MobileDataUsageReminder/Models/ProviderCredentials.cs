@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace MobileDataUsageReminder.Models
 {
@@ -10,10 +10,10 @@ namespace MobileDataUsageReminder.Models
             Password = password;
         }
 
-        [JsonProperty("username")]
+        [JsonPropertyName("username")]
         public string Username { get; }
 
-        [JsonProperty("password")]
+        [JsonPropertyName("password")]
         public string Password { get; }
     }
 }

@@ -38,7 +38,7 @@ namespace MobileDataUsageReminder.Components
 
             if (newMobileDatas.Count > 0)
             {
-                _logger.LogInformation($"There are {newMobileDatas.Count} reminders to be sent");
+                _logger.LogInformation($"There are {newMobileDatas.Count} reminders to be sent.");
 
                 // Send reminder via reminder service
                 var reminderTask = _reminderService.SendReminder(newMobileDatas);
@@ -50,7 +50,7 @@ namespace MobileDataUsageReminder.Components
             }
             else
             {
-                _logger.LogInformation("There are no reminders to be sent");
+                _logger.LogInformation("There are no reminders to be sent.");
             }
         }
     }

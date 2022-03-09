@@ -11,7 +11,7 @@ using MobileDataUsageReminder.Constants.Contracts.Orange;
 using MobileDataUsageReminder.Infrastructure.Contracts;
 using MobileDataUsageReminder.Infrastructure.Models;
 using MobileDataUsageReminder.Models;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace MobileDataUsageReminder.Infrastructure
 {

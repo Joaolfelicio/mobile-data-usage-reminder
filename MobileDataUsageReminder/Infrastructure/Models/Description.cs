@@ -1,13 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace MobileDataUsageReminder.Infrastructure.Models
 {
     public class Description
     {
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [JsonProperty("currentValue")]
+        [JsonPropertyName("currentValue")]
         public CurrentValue CurrentValue { get; set; }
     }
 }

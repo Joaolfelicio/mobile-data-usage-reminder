@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace MobileDataUsageReminder.Infrastructure.Models
 {
     public class Product
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public string Id { get; set; }
 
-        [JsonProperty("productOfferingId")]
+        [JsonPropertyName("productOfferingId")]
         public string PackageId { get; set; }
 
-        [JsonProperty("describedBy")]
+        [JsonPropertyName("describedBy")]
         public List<Description> Descriptions { get; set; }
     }
 }

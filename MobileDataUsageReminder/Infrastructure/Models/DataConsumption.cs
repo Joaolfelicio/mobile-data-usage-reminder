@@ -1,12 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace MobileDataUsageReminder.Infrastructure.Models
 {
     public class DataConsumption
     {
-        [JsonProperty("internalName")]
+        [JsonPropertyName("internalName")]
         public string Name { get; set; }
-        [JsonProperty("amount")]
+        [JsonPropertyName("amount")]
         public Amount Amount { get; set; }
     }
 }
