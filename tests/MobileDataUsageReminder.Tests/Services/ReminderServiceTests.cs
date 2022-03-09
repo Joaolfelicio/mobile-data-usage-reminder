@@ -25,7 +25,7 @@ public class ReminderServiceTests
             new MobileData { UsedPercentage = 90 }
         };
 
-        await _reminderService.SendReminder(mobileDatas);
+        _reminderService.SendReminder(mobileDatas);
 
         await _mockNotificationGateway.Received(mobileDatas.Count).SendNotification(Arg.Any<MobileData>());
     }
@@ -35,7 +35,7 @@ public class ReminderServiceTests
     {
         var mobileDatas = new List<MobileData>();
 
-        await _reminderService.SendReminder(mobileDatas);
+        _reminderService.SendReminder(mobileDatas);
 
         await _mockNotificationGateway.Received(mobileDatas.Count).SendNotification(Arg.Any<MobileData>());
     }
