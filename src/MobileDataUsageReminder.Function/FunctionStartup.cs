@@ -7,10 +7,13 @@ using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Extensions.Http;
 
+[assembly: FunctionsStartup(typeof(FunctionStartup))]
 public class FunctionStartup : FunctionsStartup
 {
     public override void Configure(IFunctionsHostBuilder builder)
     {
+        var configuration = builder.GetContext().Configuration;
+
         builder.Services.AddOptions<ApplicationConfiguration>()
                .Configure<IConfiguration>((settings, configuration) =>
                {
@@ -28,6 +31,13 @@ public class FunctionStartup : FunctionsStartup
                     sp.GetRequiredService<IOptions<ApplicationConfiguration>>().Value)
                .AddSingleton<ITelegramApiConfiguration>(sp =>
                     sp.GetRequiredService<IOptions<TelegramApiConfiguration>>().Value)
+               .AddSingleton<IMongoContext>(sp =>
+               {
+                   var mongoConfig = configuration.GetSection(nameof(MongoConfiguration))
+                                                  .Get<MongoConfiguration>();
+
+                   return new MongoContext(mongoConfig);
+               })
                .AddScoped<IProviderDataUsageService, ProviderDataUsageService>()
                .AddScoped<IOrangeConstants, OrangeConstants>()
                .AddScoped<IOrangeEndpoints, OrangeEndpoints>()

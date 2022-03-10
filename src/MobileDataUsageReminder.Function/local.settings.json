@@ -3,12 +3,17 @@
     "Values": {
         "AzureWebJobsStorage": "UseDevelopmentStorage=true",
         "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-        "ConnectionStrings:MobileDataUsageConnectionString": "",
+        "MongoConfiguration:ConnectionString": "mongodb://root:example@localhost:27018",
+        "MongoConfiguration:DatabaseName": "MobileDataUsageReminder",
+        "MongoConfiguration:CollectionName": "MobileDataReminders",
         "ApplicationConfiguration:ProviderEmail": "",
         "ApplicationConfiguration:ProviderPassword": "",
-        //TODO: Figure this out
-        "TelegramApiConfiguration:TelegramUsers": [""],
-        "TelegramApiConfiguration:ApiEndPoint": "",
-        "TelegramApiConfiguration:AccessToken": ""
+        "TelegramApiConfiguration:TelegramUsers:0:PhoneNumber": "",
+        "TelegramApiConfiguration:TelegramUsers:0:ChatId": "",
+        "TelegramApiConfiguration:TelegramUsers:1:PhoneNumber": "",
+        "TelegramApiConfiguration:TelegramUsers:1:ChatId": "",
+        "TelegramApiConfiguration:ApiEndPoint": "https://api.telegram.org/bot",
+        "TelegramApiConfiguration:AccessToken": "",
+        "TimerSchedule": "10 * * * * *"
     }
 }

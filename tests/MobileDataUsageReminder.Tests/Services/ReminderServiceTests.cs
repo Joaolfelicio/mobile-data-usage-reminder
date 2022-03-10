@@ -1,9 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
+﻿using NSubstitute;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Xunit;
 
-[TestClass]
 public class ReminderServiceTests
 {
     private INotificationGateway _mockNotificationGateway;
@@ -15,7 +14,7 @@ public class ReminderServiceTests
         _reminderService = new ReminderService(_mockNotificationGateway);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task Sending_Reminders_Should_CallTheGatewayForEachReminderToBeSent()
     {
         var mobileDatas = new List<MobileData>()
@@ -25,17 +24,17 @@ public class ReminderServiceTests
             new MobileData { UsedPercentage = 90 }
         };
 
-        _reminderService.SendReminder(mobileDatas);
+        await _reminderService.SendReminders(mobileDatas);
 
         await _mockNotificationGateway.Received(mobileDatas.Count).SendNotification(Arg.Any<MobileData>());
     }
 
-    [TestMethod]
+    [Fact]
     public async Task Sending_Reminders_Shouldnt_CallTheGatewayIfItIsEmpty()
     {
         var mobileDatas = new List<MobileData>();
 
-        _reminderService.SendReminder(mobileDatas);
+        await _reminderService.SendReminders(mobileDatas);
 
         await _mockNotificationGateway.Received(mobileDatas.Count).SendNotification(Arg.Any<MobileData>());
     }

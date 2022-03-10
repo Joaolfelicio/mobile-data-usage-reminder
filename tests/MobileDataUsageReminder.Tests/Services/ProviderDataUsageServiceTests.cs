@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using Xunit;
 
-[TestClass]
 public class ProviderDataUsageServiceTests
 {
     private readonly IApplicationConfiguration _mockApplicationConfiguration;
@@ -34,7 +33,7 @@ public class ProviderDataUsageServiceTests
             _mockMapperService);
     }
 
-    [TestMethod]
+    [Fact]
     public void EmptyDataUsage_ShouldNot_MapToMobileData()
     {
         _mockProviderGateway.GetDataUsages(Arg.Any<ProviderCredentials>(), Arg.Any<List<TelegramUser>>())
@@ -43,14 +42,14 @@ public class ProviderDataUsageServiceTests
         _mockMapperService.DidNotReceive().MapMobileData(Arg.Any<DataUsage>());
     }
 
-    [TestMethod]
+    [Fact]
     public async Task WithQuantityOfDataUsage_Should_MapToMobileData()
     {
         var dataUsages = new List<DataUsage>
         {
-            new DataUsage { InitialAmount = "1"},
-            new DataUsage { InitialAmount = "2"},
-            new DataUsage { InitialAmount = "3"}
+            new DataUsage { InitialAmount = 1 },
+            new DataUsage { InitialAmount = 2 },
+            new DataUsage { InitialAmount = 3 }
         };
 
         _mockProviderGateway.GetDataUsages(Arg.Any<ProviderCredentials>(), Arg.Any<List<TelegramUser>>())

@@ -2,17 +2,9 @@
 {
     public MobileData MapMobileData(DataUsage dataUsage)
     {
-        string truncatedUsedAmount;
-        if (dataUsage.UsedAmount.Contains('.'))
-        {
-            truncatedUsedAmount = dataUsage.UsedAmount[..dataUsage.UsedAmount.IndexOf('.', StringComparison.Ordinal)];
-        }
-        else
-        {
-            truncatedUsedAmount = dataUsage.UsedAmount;
-        }
+        var usedAmount = (int)dataUsage.UsedAmount;
 
-        var usedPercentage = int.Parse(truncatedUsedAmount) * 100 / int.Parse(dataUsage.InitialAmount);
+        var usedPercentage = usedAmount * 100 / dataUsage.InitialAmount;
 
         var roundedUsedPercentage = Convert.ToInt32(Math.Round(usedPercentage / 10.0, MidpointRounding.AwayFromZero) * 10);
 
@@ -25,8 +17,8 @@
             Year = DateTime.Now.Year,
             Unit = dataUsage.Unit,
             InitialAmount = dataUsage.InitialAmount,
-            UsedAmount = dataUsage.UsedAmount,
-            RemainingAmount = dataUsage.RemainingAmount,
+            UsedAmount = usedAmount,
+            RemainingAmount = (int)dataUsage.RemainingAmount,
             ChatId = dataUsage.TelegramUser?.ChatId,
             UsedPercentage = roundedUsedPercentage
         };

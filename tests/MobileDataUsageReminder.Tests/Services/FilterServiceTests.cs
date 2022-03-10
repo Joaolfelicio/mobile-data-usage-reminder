@@ -1,11 +1,10 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
+using Xunit;
 
-[TestClass]
 public class FilterServiceTests
 {
     private readonly FilterService _filterService;
@@ -20,7 +19,7 @@ public class FilterServiceTests
         _filterService = new FilterService(_mockRepository, _mockLogger);
     }
 
-    [TestMethod]
+    [Fact]
     public void Filtering_MobileData_Should_ReturnThemIfTheReminderWasAlreadySent_And_TheUsedPercentageIsAboveZero()
     {
         _mockRepository.WasReminderAlreadySent(Arg.Any<MobileData>()).Returns(false);
@@ -37,7 +36,7 @@ public class FilterServiceTests
         filteredMobileDatas.Should().HaveCount(mobileDatas.Count);
     }
 
-    [TestMethod]
+    [Fact]
     public void Filtering_MobileData_Shouldnt_ReturnThemIfTheUsedPercentageIsBelowOrEqualToZero()
     {
         _mockRepository.WasReminderAlreadySent(Arg.Any<MobileData>()).Returns(false);
@@ -54,7 +53,7 @@ public class FilterServiceTests
         filteredMobileDatas.Should().BeEmpty();
     }
 
-    [TestMethod]
+    [Fact]
     public void Filtering_MobileData_ShouldReturn_OnlyTheOnesThatWereNotSentYet()
     {
         var sentMobileDataGuid = Guid.NewGuid();

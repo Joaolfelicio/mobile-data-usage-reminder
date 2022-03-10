@@ -1,9 +1,9 @@
 
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using System.Net.Http.Json;
 
 public class OrangeGateway : IDataProviderGateway
 {
@@ -44,7 +44,11 @@ public class OrangeGateway : IDataProviderGateway
 
     private async Task Login(ProviderCredentials providerCredentials)
     {
-        _httpClient.DefaultRequestHeaders.Clear();
+        if (_httpClient.DefaultRequestHeaders.Any())
+        {
+            _httpClient.DefaultRequestHeaders.Clear();
+        }
+
 
         var response = await _httpClient.PostAsJsonAsync(_orangeEndpoints.LoginEndpoint, providerCredentials);
         response.EnsureSuccessStatusCode();
@@ -75,9 +79,9 @@ public class OrangeGateway : IDataProviderGateway
     private async Task<DataUsage> GetDataUsage(DataProduct dataProduct, string clientId)
     {
         var response = await _httpClient.GetFromJsonAsync(
-            _orangeEndpoints.DataConsumptionEndpoint(clientId, dataProduct.Id), 
+            _orangeEndpoints.DataConsumptionEndpoint(clientId, dataProduct.Id),
             DataConsumptionResultContext.Default.DataConsumptionResult);
-        
+
         var dataConsumption = response.DataConsumptions.Find(x => x.Name == _orangeConstants.DataTypeName);
 
         _ = dataConsumption ?? throw new Exception($"Failed to get the data usage for {dataProduct.TelegramUser.PhoneNumber} in orange.");

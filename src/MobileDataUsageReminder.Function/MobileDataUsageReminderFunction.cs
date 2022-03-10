@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -24,9 +25,13 @@ public class MobileDataUsageReminderFunction
         _filterService = filterService;
     }
 
+    
+    //TODO: Add timer as config
     [FunctionName(nameof(MobileDataUsageReminderFunction))]
-    public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo timeTrigger)
+    public async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo timeTrigger)
     {
+        Console.WriteLine("Test");
+
         var mobileData = await _providerDataUsage.GetMobileData();
 
         var newMobileDatas = _filterService.FilterNewMobileDatas(mobileData);
@@ -35,7 +40,7 @@ public class MobileDataUsageReminderFunction
         {
             _logger.LogInformation("There are {count} reminders to be sent.", newMobileDatas.Count);
 
-            var reminderTask = _reminderService.SendReminder(newMobileDatas);
+            var reminderTask = _reminderService.SendReminders(newMobileDatas);
 
             var createDataTask = _mobileDataRepository.CreateMobileData(newMobileDatas);
 
