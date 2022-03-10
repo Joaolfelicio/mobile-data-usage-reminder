@@ -1,6 +1,6 @@
 ﻿public class TelegramApiConfiguration : ITelegramApiConfiguration
 {
-    public List<TelegramUser> TelegramUsers { get; set; }
-    public string ApiEndPoint { get; set; }
-    public string AccessToken { get; set; }
+    public List<TelegramUser> TelegramUsers { get; set; } = new List<TelegramUser>();
+    public string ApiEndPoint { get; set; } = string.Empty;
+    public string AccessToken { get; set; } = string.Empty;
 }

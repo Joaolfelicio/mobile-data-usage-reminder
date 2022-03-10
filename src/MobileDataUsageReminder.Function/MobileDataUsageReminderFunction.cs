@@ -30,8 +30,6 @@ public class MobileDataUsageReminderFunction
     [FunctionName(nameof(MobileDataUsageReminderFunction))]
     public async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo timeTrigger)
     {
-        Console.WriteLine("Test");
-
         var mobileData = await _providerDataUsage.GetMobileData();
 
         var newMobileDatas = _filterService.FilterNewMobileDatas(mobileData);
