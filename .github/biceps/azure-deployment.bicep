@@ -2,13 +2,61 @@
 param location string = resourceGroup().location
 
 @description('Suffix for function app, storage account, and app insights.')
-param appNameSuffix string = uniqueString(resourceGroup().id)
+param appNameSuffix string
+
+@description('The email used to connect to the provider.')
+param providerEmail string
+
+@description('The password used to connect to the provider.')
+param providerPassword string
+
+param telegramUsers array = [
+  {
+    phoneNumber: ''
+    chatId: ''
+  }
+  {
+    phoneNumber: ''
+    chatId: ''
+  }
+]
+
+@description('The access token to manipulate the telegram api.')
+param telegramAccessToken string
+
+@description('The crono expression of the function\'s timer.')
+param cronoTimerSchedule string
 
 var functionAppName = 'fn-${appNameSuffix}'
 var appInsightsName = 'ai-${appNameSuffix}'
 var appServicePlanName = 'pn-${appNameSuffix}'
 var storageAccountName = 'sa-${replace(appNameSuffix, '-', '')}'
 var cosmosDbName = 'cdb-${appNameSuffix}'
+
+resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts@2021-04-15' = {
+  name: cosmosDbName
+  location: location
+  kind: 'GlobalDocumentDB'
+  properties: {
+    enableFreeTier: true
+    databaseAccountOfferType: 'Standard'
+    consistencyPolicy: {
+      defaultConsistencyLevel: 'Session'
+    }
+    locations: [
+      {
+        locationName: location
+        failoverPriority: 0
+        isZoneRedundant: false
+      }
+    ]
+    capabilities: [
+      {
+        name: 'EnableServerless'
+      }
+    ]
+  }
+}
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
   name: storageAccountName
@@ -57,6 +105,51 @@ resource functionApp 'Microsoft.Web/sites@2020-12-01' = {
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
         }
         {
+          name: 'MongoConfiguration:ConnectionString'
+          value: 'AccountEndpoint=https://${cosmosDb.name}.documents.azure.com:443/‌​;AccountKey=${listKeys(cosmosDb.id, cosmosDb.apiVersion).keys[0].value}'
+        }
+        {
+          name: 'MongoConfiguration:DatabaseName'
+          value: 'MobileDataUsageReminder'
+        }
+        {
+          name: 'MongoConfiguration:CollectionName'
+          value: 'MobileDataReminders'
+        }
+        {
+          name: 'ApplicationConfiguration:ProviderEmail'
+          value: providerEmail
+        }
+        {
+          name: 'ApplicationConfiguration:ProviderPassword'
+          value: providerPassword
+        }
+//TODO: Make this dynamic
+        {
+          name: 'TelegramApiConfiguration:TelegramUsers:0:PhoneNumber'
+          value: telegramUsers[0].phoneNumber
+        }
+        {
+          name: 'TelegramApiConfiguration:TelegramUsers:0:ChatId'
+          value: telegramUsers[0].chatId
+        }
+        {
+          name: 'TelegramApiConfiguration:TelegramUsers:1:PhoneNumber'
+          value: telegramUsers[1].phoneNumber
+        }
+        {
+          name: 'TelegramApiConfiguration:TelegramUsers:1:ChatId'
+          value: telegramUsers[1].chatId
+        }
+        {
+          name: 'TelegramApiConfiguration:AccessToken'
+          value: telegramAccessToken
+        }
+        {
+          name: 'TimerSchedule'
+          value: cronoTimerSchedule
+        }
+        {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
           value: appInsights.properties.InstrumentationKey
         }
@@ -75,30 +168,6 @@ resource functionApp 'Microsoft.Web/sites@2020-12-01' = {
       ]
     }
     httpsOnly: true
-  }
-}
-
-resource cosmos 'Microsoft.DocumentDB/databaseAccounts@2021-04-15' = {
-  name: cosmosDbName
-  location: location
-  kind: 'GlobalDocumentDB'
-  properties: {
-    consistencyPolicy: {
-      defaultConsistencyLevel: 'Session'
-    }
-    locations: [
-      {
-        locationName: location
-        failoverPriority: 0
-        isZoneRedundant: false
-      }
-    ]
-    capabilities: [
-      {
-        name: 'EnableServerless'
-      }
-    ]
-    databaseAccountOfferType: 'Standard'
   }
 }
 

@@ -4,6 +4,10 @@ on:
   push:
     branches: [ main ]
 
+env:
+  AppName: mobiledatausage
+  Location: westeurope
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,7 +29,7 @@ jobs:
       run: dotnet test --no-build --verbosity normal
 
     - name: Publish
-      run: dotnet publish --no-restore
+      run: dotnet publish --no-restore -o publish -c Release
 
   deploy:
     runs-on: ubuntu-latest
@@ -38,18 +42,29 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: deploy
+    - name: Create resource group
+      uses: Azure/cli@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          az group create --name rg-${{ env.AppName }} --location ${{ env.Location }}
+
+    - name: Deploy infra
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
-        resourceGroupName: ${{ secrets.AZURE_RG }}
+        resourceGroupName: rg-${{ env.AppName }}
         template: ../biceps/azure-deployment.bicep
-        parameters: location=westeurope appNameSuffix=mobiledatausage
+        parameters: >
+          appNameSuffix=${{ env.AppName }} 
+          providerEmail=${{ secrets.APPCONFIG_PROVIDEREMAIL }} 
+          providerPassword=${{ secrets.APPCONFIG_PROVIDERPASSWORD }}
+          telegramUsers=${{ secrets.TELEGRAMAPICONFING_TELEGRAMUSERS }}
+          telegramAccessToken=${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
+          cronoTimerSchedule='0 */15 * * * *'
 
     - name: 'Run Azure Functions Action'
       uses: Azure/functions-action@v1
-      id: fa
       with:
-        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-        package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+        app-name: fn-${{ env.AppName }}
+        package: './publish'
