@@ -387,7 +387,6 @@ sketch
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-.vscode
 
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
@@ -418,5 +417,8 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+**/__*__.json
+**/__*__
 
 # End of https://www.gitignore.io/api/react,csharp,windows,dotnetcore,visualstudiocode

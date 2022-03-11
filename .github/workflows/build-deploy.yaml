@@ -4,64 +4,67 @@ on:
   push:
     branches: [ main ]
 
+env:
+  AppName: mobiledatausage
+  Location: westeurope
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
 
-    - name: Setup .NET 3.1.x
+    - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.x
+        dotnet-version: 6.0.x
 
     - name: Restore dependencies
       run: dotnet restore
 
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore -c Release
 
     - name: Test
       run: dotnet test --no-build --verbosity normal
+
+    - name: Publish
+      run: dotnet publish --no-restore -o publish -c Release
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
 
-    env:
-      APP_NAME: mobiledatausagereminder
-      TELEGRAMAPICONFING_ENDPOINT: https://api.telegram.org/bot
-      IMAGE_URL: registry.heroku.com/mobiledatausagereminder/worker:latest
-      HEROKU_API_KEY: ${{ secrets.HEROKUCONFIG_TOKEN }}
-
     steps:
     - uses: actions/checkout@v2
 
-    - name: Replace configuration in appsettings
-      uses: microsoft/variable-substitution@v1
+    - uses: azure/login@v1
       with:
-        files: 'MobileDataUsageReminder/appsettings.json'
-      env:
-        ConnectionString.MobileDataUsageConnectionString: ${{ secrets.CONNECTIONSTRING }}
-        ApplicationConfiguration.ProviderEmail: ${{ secrets.APPCONFIG_PROVIDEREMAIL }}
-        ApplicationConfiguration.ProviderPassword: ${{ secrets.APPCONFIG_PROVIDERPASSWORD }}
-        TelegramApiConfiguration.TelegramUsers: ${{ secrets.TELEGRAMAPICONFING_TELEGRAMUSERS }}
-        TelegramApiConfiguration.ApiEndPoint: ${{ env.TELEGRAMAPICONFING_ENDPOINT}}
-        TelegramApiConfiguration.AccessToken: ${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Login to Heroku Container Registry
-      uses: docker/login-action@v1
+    - name: Create resource group
+      uses: Azure/cli@v1
+      continue-on-error: true
       with:
-        registry: registry.heroku.com
-        username: ${{ secrets.HEROKUCONFIG_EMAIL }}
-        password: ${{ env.HEROKU_API_KEY }}
+        inlineScript: |
+          az group create --name rg-${{ env.AppName }} --location ${{ env.Location }}
 
-    - name: Build and push to Heroku Registry
-      uses: docker/build-push-action@v2
+    - name: Deploy infra
+      uses: azure/arm-deploy@v1
       with:
-        context: .
-        push: true
-        tags: ${{ env.IMAGE_URL }}
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        resourceGroupName: rg-${{ env.AppName }}
+        template: ../biceps/azure-deployment.bicep
+        parameters: >
+          appNameSuffix=${{ env.AppName }} 
+          providerEmail=${{ secrets.APPCONFIG_PROVIDEREMAIL }} 
+          providerPassword=${{ secrets.APPCONFIG_PROVIDERPASSWORD }}
+          telegramUsers=${{ secrets.TELEGRAMAPICONFING_TELEGRAMUSERS }}
+          telegramAccessToken=${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
+          cronoTimerSchedule='0 */15 * * * *'
 
-    - name: Release image to Heroku App
-      run: heroku container:release worker -a ${{ env.APP_NAME }}
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1
+      with:
+        app-name: fn-${{ env.AppName }}
+        package: './publish'
