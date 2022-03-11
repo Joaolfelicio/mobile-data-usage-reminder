@@ -54,21 +54,21 @@ public class OrangeGateway : IDataProviderGateway
         response.EnsureSuccessStatusCode();
 
         var responseString = await response.Content.ReadAsStringAsync();
-        var responseData = JsonSerializer.Deserialize<LoginResult>(responseString, LoginResultContext.Default.LoginResult);
+        var responseData = JsonSerializer.Deserialize(responseString, LoginResultContext.Default.LoginResult);
 
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(responseData.TokenType, responseData.TokenValue);
     }
 
     private async Task<string> GetClientId()
     {
-        var response = await _httpClient.GetFromJsonAsync<ClientResult>(_orangeEndpoints.ClientEndpoint, ClientResultContext.Default.ClientResult);
+        var response = await _httpClient.GetFromJsonAsync(_orangeEndpoints.ClientEndpoint, ClientResultContext.Default.ClientResult);
 
         return response.PartyRole.Id;
     }
 
     private async Task<List<DataProduct>> GetMobileDataProducts(List<TelegramUser> telegramUsers, string clientId)
     {
-        var response = await _httpClient.GetFromJsonAsync<ProductsResult>(_orangeEndpoints.ProductEndpoint(clientId), ProductsResultContext.Default.ProductsResult);
+        var response = await _httpClient.GetFromJsonAsync(_orangeEndpoints.ProductEndpoint(clientId), ProductsResultContext.Default.ProductsResult);
 
         List<DataProduct> dataProducts = ProjectDataProducts(telegramUsers, response);
 
