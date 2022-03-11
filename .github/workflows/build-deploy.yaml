@@ -31,6 +31,9 @@ jobs:
     - name: Publish
       run: dotnet publish --no-restore -o publish -c Release
 
+    - name: Publish
+      run: dotnet publish --no-restore -o publish -c Release
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
