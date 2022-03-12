@@ -38,6 +38,9 @@ resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts@2021-04-15' = {
   location: location
   kind: 'MongoDB'
   properties: {
+    apiProperties: {
+      serverVersion: '4.0'
+    }
     enableFreeTier: true
     databaseAccountOfferType: 'Standard'
     consistencyPolicy: {
@@ -106,7 +109,7 @@ resource functionApp 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'MongoConfiguration:ConnectionString'
-          value: 'AccountEndpoint=https://${cosmosDb.name}.documents.azure.com:443/;AccountKey=${listKeys(cosmosDb.id, cosmosDb.apiVersion).primaryMasterKey}'
+          value: first(listConnectionStrings(cosmosDb.id, cosmosDb.apiVersion).connectionStrings).connectionString
         }
         {
           name: 'MongoConfiguration:DatabaseName'
