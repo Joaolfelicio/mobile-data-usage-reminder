@@ -30,7 +30,7 @@ param cronoTimerSchedule string
 var functionAppName = 'fn-${appNameSuffix}'
 var appInsightsName = 'ai-${appNameSuffix}'
 var appServicePlanName = 'pn-${appNameSuffix}'
-var storageAccountName = 'sa-${replace(appNameSuffix, '-', '')}'
+var storageAccountName = 'sa${replace(appNameSuffix, '-', '')}'
 var cosmosDbName = 'cdb-${appNameSuffix}'
 
 resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts@2021-04-15' = {
