@@ -36,12 +36,12 @@ var cosmosDbName = 'cdb-${appNameSuffix}'
 resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts@2021-04-15' = {
   name: cosmosDbName
   location: location
-  kind: 'GlobalDocumentDB'
+  kind: 'MongoDB'
   properties: {
     enableFreeTier: true
     databaseAccountOfferType: 'Standard'
     consistencyPolicy: {
-      defaultConsistencyLevel: 'Session'
+      defaultConsistencyLevel: 'Eventual'
     }
     locations: [
       {
@@ -106,7 +106,7 @@ resource functionApp 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'MongoConfiguration:ConnectionString'
-          value: 'AccountEndpoint=https://${cosmosDb.name}.documents.azure.com:443/‌​;AccountKey=${listKeys(cosmosDb.id, cosmosDb.apiVersion).keys[0].value}'
+          value: 'AccountEndpoint=https://${cosmosDb.name}.documents.azure.com:443/‌​;AccountKey=${listKeys(cosmosDb.id, cosmosDb.apiVersion).primaryMasterKey}'
         }
         {
           name: 'MongoConfiguration:DatabaseName'
