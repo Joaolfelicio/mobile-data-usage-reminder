@@ -12,12 +12,12 @@ param providerPassword string
 
 param telegramUsers array = [
   {
-    phoneNumber: ''
-    chatId: ''
+    phoneNumber: '123'
+    chatId: '123'
   }
   {
-    phoneNumber: ''
-    chatId: ''
+    phoneNumber: '123'
+    chatId: '123'
   }
 ]
 

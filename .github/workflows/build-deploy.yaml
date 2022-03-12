@@ -55,20 +55,20 @@ jobs:
 
     - name: Deploy infra
       uses: azure/arm-deploy@v1
+      id: deployinfra
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: rg-${{ env.AppName }}
         template: .github/biceps/azure-deployment.bicep
         parameters: >
-          appNameSuffix=${{ env.AppName }} 
+          appNameSuffix=${{ env.AppName }}
           providerEmail=${{ secrets.APPCONFIG_PROVIDEREMAIL }} 
           providerPassword=${{ secrets.APPCONFIG_PROVIDERPASSWORD }}
-          telegramUsers=${{ fromJSON(secrets.TELEGRAMAPICONFING_TELEGRAMUSERS) }}
           telegramAccessToken=${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
           cronoTimerSchedule='0 */15 * * * *'
 
     - name: Deploy azure functions code
       uses: Azure/functions-action@v1
       with:
-        app-name: fn-${{ env.AppName }}
+        app-name: ${{ steps.deployinfra.outputs.functionAppName }}
         package: './publish'
