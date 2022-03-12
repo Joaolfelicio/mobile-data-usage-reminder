@@ -58,7 +58,7 @@ jobs:
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: rg-${{ env.AppName }}
-        template: ../biceps/azure-deployment.bicep
+        template: .github/biceps/azure-deployment.bicep
         parameters: >
           appNameSuffix=${{ env.AppName }} 
           providerEmail=${{ secrets.APPCONFIG_PROVIDEREMAIL }} 
