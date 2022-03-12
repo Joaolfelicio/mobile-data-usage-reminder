@@ -3,6 +3,7 @@ name: Build and Deploy Prod
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 env:
   AppName: mobiledatausage
@@ -66,7 +67,7 @@ jobs:
           telegramAccessToken=${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
           cronoTimerSchedule='0 */15 * * * *'
 
-    - name: 'Run Azure Functions Action'
+    - name: Deploy azure functions code
       uses: Azure/functions-action@v1
       with:
         app-name: fn-${{ env.AppName }}
