@@ -106,7 +106,7 @@ resource functionApp 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'MongoConfiguration:ConnectionString'
-          value: listKeys(cosmosDb.id, cosmosDb.apiVersion).primaryConnectionString
+          value: 'AccountEndpoint=https://${cosmosDb.name}.documents.azure.com:443/‌​;AccountKey=${listKeys(cosmosDb.id, cosmosDb.apiVersion).primaryMasterKey}'
         }
         {
           name: 'MongoConfiguration:DatabaseName'
