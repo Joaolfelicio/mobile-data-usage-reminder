@@ -10,16 +10,10 @@ param providerEmail string
 @description('The password used to connect to the provider.')
 param providerPassword string
 
-param telegramUsers array = [
-  {
-    phoneNumber: ''
-    chatId: ''
-  }
-  {
-    phoneNumber: ''
-    chatId: ''
-  }
-]
+param telegramUserOnePhoneNumber string
+param telegramUserOneChatId string
+param telegramUserTwoPhoneNumber string
+param telegramUserTwoChatId string
 
 @description('The access token to manipulate the telegram api.')
 param telegramAccessToken string
@@ -127,22 +121,21 @@ resource functionApp 'Microsoft.Web/sites@2020-12-01' = {
           name: 'ApplicationConfiguration:ProviderPassword'
           value: providerPassword
         }
-//TODO: Make this dynamic
         {
           name: 'TelegramApiConfiguration:TelegramUsers:0:PhoneNumber'
-          value: telegramUsers[0].phoneNumber
+          value: telegramUserOnePhoneNumber
         }
         {
           name: 'TelegramApiConfiguration:TelegramUsers:0:ChatId'
-          value: telegramUsers[0].chatId
+          value: telegramUserOneChatId
         }
         {
           name: 'TelegramApiConfiguration:TelegramUsers:1:PhoneNumber'
-          value: telegramUsers[1].phoneNumber
+          value: telegramUserTwoPhoneNumber
         }
         {
           name: 'TelegramApiConfiguration:TelegramUsers:1:ChatId'
-          value: telegramUsers[1].chatId
+          value: telegramUserTwoChatId
         }
         {
           name: 'TelegramApiConfiguration:AccessToken'
