@@ -73,7 +73,7 @@ jobs:
           appNameSuffix=${{ env.AppName }}
           providerEmail=${{ secrets.APPCONFIG_PROVIDEREMAIL }} 
           providerPassword=${{ secrets.APPCONFIG_PROVIDERPASSWORD }}
-          telegramUsers="${{ secrets.TELEGRAMAPICONFING_TELEGRAMUSERS }}"
+          telegramUsers="${{ toJSON(secrets.TELEGRAMAPICONFING_TELEGRAMUSERS) }}"
           telegramAccessToken=${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
           cronoTimerSchedule="0 */15 * * * *"
 
