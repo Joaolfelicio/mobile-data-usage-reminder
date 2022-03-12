@@ -65,7 +65,7 @@ jobs:
           providerEmail=${{ secrets.APPCONFIG_PROVIDEREMAIL }} 
           providerPassword=${{ secrets.APPCONFIG_PROVIDERPASSWORD }}
           telegramAccessToken=${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
-          cronoTimerSchedule='0 */15 * * * *'
+          cronoTimerSchedule="0 */15 * * * *"
 
     - name: Deploy azure functions code
       uses: Azure/functions-action@v1
