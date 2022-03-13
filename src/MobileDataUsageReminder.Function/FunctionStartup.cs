@@ -14,6 +14,8 @@ public class FunctionStartup : FunctionsStartup
     {
         var configuration = builder.GetContext().Configuration;
 
+        builder.Services.AddLogging();
+
         builder.Services.AddOptions<ApplicationConfiguration>()
                .Configure<IConfiguration>((settings, configuration) =>
                {

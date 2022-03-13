@@ -8,7 +8,7 @@
             }
         },
         "logLevel": {
-            "MobileDataUsageReminder.Function": "Information"
+            "Default": "Information"
         }
     }
 }
