@@ -1,47 +1,38 @@
-@description('Specifies region of all resources.')
 param location string = resourceGroup().location
-
-@description('Suffix for function app, storage account, and app insights.')
 param appNameSuffix string
 
-@description('The email used to connect to the provider.')
 param providerEmail string
-
-@description('The password used to connect to the provider.')
 param providerPassword string
 
-param telegramUsers array = [
-  {
-    phoneNumber: ''
-    chatId: ''
-  }
-  {
-    phoneNumber: ''
-    chatId: ''
-  }
-]
-
-@description('The access token to manipulate the telegram api.')
+param telegramUserOnePhoneNumber string
+param telegramUserOneChatId string
+param telegramUserTwoPhoneNumber string
+param telegramUserTwoChatId string
 param telegramAccessToken string
+param telegramApiEndpoint string = 'https://api.telegram.org/bot'
 
-@description('The crono expression of the function\'s timer.')
+
+
 param cronoTimerSchedule string
 
 var functionAppName = 'fn-${appNameSuffix}'
 var appInsightsName = 'ai-${appNameSuffix}'
 var appServicePlanName = 'pn-${appNameSuffix}'
-var storageAccountName = 'sa-${replace(appNameSuffix, '-', '')}'
+var storageAccountName = 'sa${replace(appNameSuffix, '-', '')}'
 var cosmosDbName = 'cdb-${appNameSuffix}'
 
 resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts@2021-04-15' = {
   name: cosmosDbName
   location: location
-  kind: 'GlobalDocumentDB'
+  kind: 'MongoDB'
   properties: {
+    apiProperties: {
+      serverVersion: '4.0'
+    }
     enableFreeTier: true
     databaseAccountOfferType: 'Standard'
     consistencyPolicy: {
-      defaultConsistencyLevel: 'Session'
+      defaultConsistencyLevel: 'Eventual'
     }
     locations: [
       {
@@ -106,7 +97,7 @@ resource functionApp 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'MongoConfiguration:ConnectionString'
-          value: 'AccountEndpoint=https://${cosmosDb.name}.documents.azure.com:443/‌​;AccountKey=${listKeys(cosmosDb.id, cosmosDb.apiVersion).keys[0].value}'
+          value: first(listConnectionStrings(cosmosDb.id, cosmosDb.apiVersion).connectionStrings).connectionString
         }
         {
           name: 'MongoConfiguration:DatabaseName'
@@ -124,22 +115,25 @@ resource functionApp 'Microsoft.Web/sites@2020-12-01' = {
           name: 'ApplicationConfiguration:ProviderPassword'
           value: providerPassword
         }
-//TODO: Make this dynamic
         {
           name: 'TelegramApiConfiguration:TelegramUsers:0:PhoneNumber'
-          value: telegramUsers[0].phoneNumber
+          value: telegramUserOnePhoneNumber
         }
         {
           name: 'TelegramApiConfiguration:TelegramUsers:0:ChatId'
-          value: telegramUsers[0].chatId
+          value: telegramUserOneChatId
         }
         {
           name: 'TelegramApiConfiguration:TelegramUsers:1:PhoneNumber'
-          value: telegramUsers[1].phoneNumber
+          value: telegramUserTwoPhoneNumber
         }
         {
           name: 'TelegramApiConfiguration:TelegramUsers:1:ChatId'
-          value: telegramUsers[1].chatId
+          value: telegramUserTwoChatId
+        }
+        {
+          name: 'TelegramApiConfiguration:ApiEndPoint'
+          value: telegramApiEndpoint
         }
         {
           name: 'TelegramApiConfiguration:AccessToken'

@@ -28,7 +28,7 @@ public class MobileDataUsageReminderFunction
     
     //TODO: Add timer as config
     [FunctionName(nameof(MobileDataUsageReminderFunction))]
-    public async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo timeTrigger)
+    public async Task Run([TimerTrigger("0 */15 * * * *", RunOnStartup = true)] TimerInfo timeTrigger)
     {
         var mobileData = await _providerDataUsage.GetMobileData();
 
