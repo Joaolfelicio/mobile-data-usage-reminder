@@ -1,15 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <UserSecretsId>7172cb4b-290d-4444-bcb7-5d64fea1a6b3</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.0.1" />
-    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="6.0.3" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.0.1"/>
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="6.0.3"/>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0"/>
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
@@ -21,9 +22,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
+    <None Include="..\.editorconfig" Link=".editorconfig"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MobileDataUsageReminder.Core\MobileDataUsageReminder.Core.csproj" />
+    <ProjectReference Include="..\MobileDataUsageReminder.Core\MobileDataUsageReminder.Core.csproj"/>
   </ItemGroup>
 </Project>
