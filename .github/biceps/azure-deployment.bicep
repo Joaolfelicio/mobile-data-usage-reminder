@@ -1,24 +1,18 @@
-@description('Specifies region of all resources.')
 param location string = resourceGroup().location
-
-@description('Suffix for function app, storage account, and app insights.')
 param appNameSuffix string
 
-@description('The email used to connect to the provider.')
 param providerEmail string
-
-@description('The password used to connect to the provider.')
 param providerPassword string
 
 param telegramUserOnePhoneNumber string
 param telegramUserOneChatId string
 param telegramUserTwoPhoneNumber string
 param telegramUserTwoChatId string
-
-@description('The access token to manipulate the telegram api.')
 param telegramAccessToken string
+param telegramApiEndpoint string = 'https://api.telegram.org/bot'
 
-@description('The crono expression of the function\'s timer.')
+
+
 param cronoTimerSchedule string
 
 var functionAppName = 'fn-${appNameSuffix}'
@@ -136,6 +130,10 @@ resource functionApp 'Microsoft.Web/sites@2020-12-01' = {
         {
           name: 'TelegramApiConfiguration:TelegramUsers:1:ChatId'
           value: telegramUserTwoChatId
+        }
+        {
+          name: 'TelegramApiConfiguration:ApiEndPoint'
+          value: telegramApiEndpoint
         }
         {
           name: 'TelegramApiConfiguration:AccessToken'
