@@ -46,7 +46,8 @@ public class FunctionStartup : FunctionsStartup
                .AddScoped<IFilterService, FilterService>()
                .AddScoped<IReminderService, ReminderService>()
                .AddScoped<IMobileDataRepository, MobileDataRepository>()
-               .AddScoped<IMapperService, MapperService>();
+               .AddScoped<IMapperService, MapperService>()
+               .AddScoped<ICheckUsageProcessor, CheckUsageProcessor>();
 
         builder.Services.AddHttpClient<INotificationGateway, TelegramGateway>()
                .SetHandlerLifetime(TimeSpan.FromMinutes(5))
@@ -57,13 +58,13 @@ public class FunctionStartup : FunctionsStartup
                .AddPolicyHandler(RetryPolicy());
     }
 
-    private IAsyncPolicy<HttpResponseMessage> RetryPolicy()
+    private static IAsyncPolicy<HttpResponseMessage> RetryPolicy()
     {
         var jitterer = new Random();
 
         return HttpPolicyExtensions
             .HandleTransientHttpError()
-            .WaitAndRetryAsync(6, retryAttempt => 
+            .WaitAndRetryAsync(6, retryAttempt =>
                 TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) + TimeSpan.FromMilliseconds(jitterer.Next(0, 1000)));
     }
 }

@@ -6,22 +6,21 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 
-public class MobileDataUsageReminderDispatcherFunction
+public class MobileDataCommandDispatcherFunction
 {
     private readonly ICommandProcessorBinder _commandProcessorBinder;
 
-    public MobileDataUsageReminderDispatcherFunction(ICommandProcessorBinder commandProcessorBinder)
+    public MobileDataCommandDispatcherFunction(ICommandProcessorBinder commandProcessorBinder)
     {
         _commandProcessorBinder = commandProcessorBinder;
     }
 
-    [FunctionName(nameof(MobileDataUsageReminderDispatcherFunction))]
+    [FunctionName(nameof(MobileDataCommandDispatcherFunction))]
     public async Task Run(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
         HttpRequest request, ILogger logger)
     {
-        var eventJson = await request.ReadAsStringAsync();
-        var eventPayload = JsonSerializer.Deserialize(eventJson, EventPayloadContext.Default.EventPayload);
+        var eventPayload = JsonSerializer.Deserialize(await request.ReadAsStringAsync(), CommandEventPayloadContext.Default.CommandEventPayload);
 
         ValidateEventPayload(eventPayload);
 
@@ -32,7 +31,7 @@ public class MobileDataUsageReminderDispatcherFunction
         await processor.ProcessCommand(eventPayload);
     }
 
-    private static void ValidateEventPayload(EventPayload eventData)
+    private static void ValidateEventPayload(CommandEventPayload eventData)
     {
         ArgumentNullException.ThrowIfNull(eventData?.Message?.CommandType, nameof(eventData.Message.CommandType));
         ArgumentNullException.ThrowIfNull(eventData?.Message?.From?.Id, "From.Id");

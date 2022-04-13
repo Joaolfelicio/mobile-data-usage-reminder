@@ -34,8 +34,7 @@ public class OrangeGateway : IDataProviderGateway
         var dataUsages = new List<DataUsage>();
         foreach (var dataProduct in dataProducts)
         {
-            var dataUsage = await GetDataUsage(dataProduct, clientId);
-            dataUsages.Add(dataUsage);
+            dataUsages.Add(await GetDataUsage(dataProduct, clientId));
         }
 
         return dataUsages;

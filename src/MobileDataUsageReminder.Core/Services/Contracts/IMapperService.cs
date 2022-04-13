@@ -1,4 +1,5 @@
 public interface IMapperService
 {
-    MobileData MapMobileData(DataUsage dataUsage);
+    IEnumerable<MobileData> MapMobileData(IEnumerable<DataUsage> dataUsages);
+    IEnumerable<MobileData> MapMobileDataRoundUpPercent(IEnumerable<DataUsage> dataUsages);
 }

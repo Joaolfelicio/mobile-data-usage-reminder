@@ -1,4 +1,4 @@
 public interface IFilterService
 {
-    List<MobileData> FilterNewMobileDatas(List<MobileData> mobileDatas);
+    IEnumerable<MobileData> FilterNewMobileDatas(IEnumerable<MobileData> mobileDatas);
 }

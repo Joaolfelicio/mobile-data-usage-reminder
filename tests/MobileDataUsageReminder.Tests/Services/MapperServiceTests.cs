@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
 using Xunit;
 
 public class MapperServiceTests
@@ -23,8 +25,8 @@ public class MapperServiceTests
     {
         var dataUsage = new DataUsage { RemainingAmount = remainingAmount, UsedAmount = usedAmount, InitialAmount = 100 };
 
-        var result = _mapperService.MapMobileData(dataUsage);
+        var result = _mapperService.MapMobileDataRoundUpPercent(new List<DataUsage> { dataUsage });
 
-        result.UsedPercentage.Should().Be(expectedPercentage);
+        result.First().UsedPercentage.Should().Be(expectedPercentage);
     }
 }

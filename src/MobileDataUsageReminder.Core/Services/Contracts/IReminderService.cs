@@ -1,4 +1,4 @@
 public interface IReminderService
 {
-    Task SendReminders(List<MobileData> dataUsages);
+    Task SendReminders(IList<MobileData> dataUsages);
 }

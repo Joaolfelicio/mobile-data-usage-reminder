@@ -1,4 +1,4 @@
 public interface IProviderDataUsageService
 {
-    Task<List<MobileData>> GetMobileData();
+    Task<IEnumerable<DataUsage>> GetDataUsage();
 }

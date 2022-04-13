@@ -13,7 +13,7 @@ public class FilterService : IFilterService
         _logger = logger;
     }
 
-    public List<MobileData> FilterNewMobileDatas(List<MobileData> mobileDatas)
+    public IEnumerable<MobileData> FilterNewMobileDatas(IEnumerable<MobileData> mobileDatas)
     {
         var newMobileData = new List<MobileData>();
 

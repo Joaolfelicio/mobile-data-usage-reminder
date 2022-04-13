@@ -1,0 +1,6 @@
+[
+    {
+        "command": "/checkusage",
+        "description": "Get the current mobile data usage."
+    }
+]

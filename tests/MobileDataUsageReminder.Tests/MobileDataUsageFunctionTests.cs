@@ -7,6 +7,7 @@ using Xunit;
 public class MobileDataUsageFunctionTests
 {
     private readonly IProviderDataUsageService _mockProviderDataUsage;
+    private readonly IMapperService _mockMapperService;
     private readonly IReminderService _mockReminderService;
     private readonly ILogger<MobileDataUsageReminderFunction> _mockLogger;
     private readonly IMobileDataRepository _mockMobileDataRepository;
@@ -16,6 +17,7 @@ public class MobileDataUsageFunctionTests
     public MobileDataUsageFunctionTests()
     {
         _mockProviderDataUsage = Substitute.For<IProviderDataUsageService>();
+        _mockMapperService = Substitute.For<IMapperService>();
         _mockReminderService = Substitute.For<IReminderService>();
         _mockLogger = Substitute.For<ILogger<MobileDataUsageReminderFunction>>();
         _mockMobileDataRepository = Substitute.For<IMobileDataRepository>();
@@ -23,6 +25,7 @@ public class MobileDataUsageFunctionTests
 
         _mobileDataUsageReminder = new MobileDataUsageReminderFunction(
             _mockProviderDataUsage,
+            _mockMapperService,
             _mockReminderService,
             _mockLogger,
             _mockMobileDataRepository,

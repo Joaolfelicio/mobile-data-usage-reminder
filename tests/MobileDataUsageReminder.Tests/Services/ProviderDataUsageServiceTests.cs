@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
@@ -7,7 +8,6 @@ public class ProviderDataUsageServiceTests
 {
     private readonly IApplicationConfiguration _mockApplicationConfiguration;
     private readonly IDataProviderGateway _mockProviderGateway;
-    private readonly IMapperService _mockMapperService;
     private readonly ITelegramApiConfiguration _mockTelegramApiConfiguration;
     private readonly ProviderDataUsageService _providerDataUsageService;
 
@@ -17,7 +17,6 @@ public class ProviderDataUsageServiceTests
     {
         _mockApplicationConfiguration = Substitute.For<IApplicationConfiguration>();
         _mockProviderGateway = Substitute.For<IDataProviderGateway>();
-        _mockMapperService = Substitute.For<IMapperService>();
 
         var telegramUsers = new List<TelegramUser>
         {
@@ -29,17 +28,7 @@ public class ProviderDataUsageServiceTests
         _providerDataUsageService = new ProviderDataUsageService(
             _mockApplicationConfiguration,
             _mockProviderGateway,
-            _mockTelegramApiConfiguration,
-            _mockMapperService);
-    }
-
-    [Fact]
-    public void EmptyDataUsage_ShouldNot_MapToMobileData()
-    {
-        _mockProviderGateway.GetDataUsages(Arg.Any<ProviderCredentials>(), Arg.Any<List<TelegramUser>>())
-                    .Returns(Task.FromResult(new List<DataUsage>()));
-
-        _mockMapperService.DidNotReceive().MapMobileData(Arg.Any<DataUsage>());
+            _mockTelegramApiConfiguration);
     }
 
     [Fact]
@@ -55,8 +44,8 @@ public class ProviderDataUsageServiceTests
         _mockProviderGateway.GetDataUsages(Arg.Any<ProviderCredentials>(), Arg.Any<List<TelegramUser>>())
                     .Returns(Task.FromResult(dataUsages));
 
-        await _providerDataUsageService.GetMobileData();
+        var result = await _providerDataUsageService.GetDataUsage();
 
-        _mockMapperService.Received(dataUsages.Count).MapMobileData(Arg.Any<DataUsage>());
+        result.Should().HaveCount(dataUsages.Count);
     }
 }
