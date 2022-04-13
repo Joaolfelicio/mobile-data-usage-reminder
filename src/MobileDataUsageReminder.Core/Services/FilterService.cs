@@ -24,7 +24,7 @@ public class FilterService : IFilterService
             if (!hasReminderSent && mobileData.UsedPercentage > 0)
             {
                 newMobileData.Add(mobileData);
-                _logger.LogInformation("Reminder will be sent for {phone number}, reached {used percentage}% in {month}", mobileData.PhoneNumber, mobileData, mobileData.Month);
+                _logger.LogInformation("Reminder will be sent for {phone number}, reached {used percentage}% in {month}", mobileData.PhoneNumber, mobileData.UsedPercentage, mobileData.Month);
             }
             else
             {
