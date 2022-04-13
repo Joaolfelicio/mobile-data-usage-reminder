@@ -31,10 +31,10 @@ public class MobileDataCommandDispatcherFunction
         await processor.ProcessCommand(eventPayload);
     }
 
-    private static void ValidateEventPayload(CommandEventPayload eventData)
+    private static void ValidateEventPayload(CommandEventPayload eventPayload)
     {
-        ArgumentNullException.ThrowIfNull(eventData?.Message?.CommandType, nameof(eventData.Message.CommandType));
-        ArgumentNullException.ThrowIfNull(eventData?.Message?.From?.Id, "From.Id");
+        ArgumentNullException.ThrowIfNull(eventPayload?.Message?.CommandType, nameof(eventPayload.Message.CommandType));
+        ArgumentNullException.ThrowIfNull(eventPayload?.Message?.From?.Id, "From.Id");
     }
 }
 

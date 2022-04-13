@@ -1,6 +1,6 @@
-internal static class EventConstants
+public static class EventConstants
 {
-    internal const string _commandPrefix = "/";
+    private const string _commandPrefix = "/";
 
-    internal const string CheckUsage = _commandPrefix + "checkusage";
+    public const string CheckUsage = _commandPrefix + "checkusage";
 }

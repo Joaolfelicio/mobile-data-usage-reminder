@@ -18,9 +18,7 @@ public class CheckUsageProcessor : ICheckUsageProcessor
     {
         bool IsSameFromId(DataUsage du) => du.TelegramUser.ChatId == eventPayload.Message.From.Id.ToString();
 
-        var dataUsage = (await _providerDataUsage.GetDataUsage()).FirstOrDefault(IsSameFromId);
-
-        _ = dataUsage ?? throw new Exception("No data usage found.");
+        var dataUsage = (await _providerDataUsage.GetDataUsage()).First(IsSameFromId);
 
         var mobileData = _mapperService.MapMobileData(new List<DataUsage> { dataUsage });
 

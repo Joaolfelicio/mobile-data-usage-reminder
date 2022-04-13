@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -40,11 +41,11 @@ public class MobileDataUsageFunctionTests
             new MobileData(),
             new MobileData()
         };
-        _mockFilterService.FilterNewMobileDatas(Arg.Any<List<MobileData>>()).Returns(mobileDatas);
+        _mockFilterService.FilterNewMobileDatas(Arg.Any<IEnumerable<MobileData>>()).Returns(mobileDatas);
 
-        await _mobileDataUsageReminder.Run(null);
+        await _mobileDataUsageReminder.Run(default);
 
-        await _mockReminderService.Received(1).SendReminders(mobileDatas);
+        await _mockReminderService.Received(1).SendReminders(Arg.Is<IList<MobileData>>(x => x.Count == mobileDatas.Count));
         await _mockMobileDataRepository.Received(1).CreateMobileData(mobileDatas);
     }
 
@@ -52,9 +53,9 @@ public class MobileDataUsageFunctionTests
     public async Task SendingAndStoring_Reminders_ShouldntBeCalled_IfThereAreNoMobileDatas()
     {
         var mobileDatas = new List<MobileData>();
-        _mockFilterService.FilterNewMobileDatas(Arg.Any<List<MobileData>>()).Returns(mobileDatas);
+        _mockFilterService.FilterNewMobileDatas(Arg.Any<IEnumerable<MobileData>>()).Returns(mobileDatas);
 
-        await _mobileDataUsageReminder.Run(null);
+        await _mobileDataUsageReminder.Run(default);
 
         await _mockReminderService.DidNotReceive().SendReminders(mobileDatas);
         await _mockMobileDataRepository.DidNotReceive().CreateMobileData(mobileDatas);
