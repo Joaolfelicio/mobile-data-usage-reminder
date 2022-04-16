@@ -56,6 +56,7 @@ jobs:
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+        enable-AzPSSession: true 
 
     - name: Create resource group
       uses: Azure/cli@v1
@@ -83,16 +84,18 @@ jobs:
           telegramAccessToken=${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
           cronoTimerSchedule="0 */15 * * * *"
 
-    - name: Setup telegram webhook
-      shell: pwsh
-      run: >
-        ./artifact/.github/scripts/setup-telegram-webhook.ps1 
-        ${{ env.TelegramEndpoint }} 
-        ${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }} 
-        "${{ steps.deployinfra.outputs.functionBaseUrl }}/MobileDataCommandDispatcherFunction"
-        (ConvertTo-SecureString ${{ steps.deployinfra.outputs.functionHostKey }} -AsPlainText -Force)
+    - name: Setup MobileDataCommandDispatcherFunction telegram webhook
+      uses: azure/powershell@v1
+      with:
+        azPSVersion: latest
+        inlineScript: >
+          ./artifact/.github/scripts/setup-telegram-webhook.ps1 
+          ${{ env.TelegramEndpoint }} 
+          ${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }} 
+          "${{ steps.deployinfra.outputs.functionBaseUrl }}/MobileDataCommandDispatcherFunction"
+          ${{ steps.deployinfra.outputs.functionAppName }}
 
-    - name: Setup telegram commands
+    - name: Setup MobileDataCommandDispatcherFunction telegram commands
       shell: pwsh
       run: >
         ./artifact/.github/scripts/setup-telegram-commands.ps1 
