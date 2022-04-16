@@ -1,12 +1,14 @@
 param(
     [string]$TelegramEndpoint,
     [string]$TelegramToken,
-    [string]$BaseWebhookUrl,
-    [Security.SecureString]$WebhookKey
+    [string]$FunctionUrl,
+    [string]$FunctionAppName
 )
 
+$functionKey = (Get-AzResource -Name $FunctionAppName | Invoke-AzResourceAction -Action host/default/listkeys -Force).functionKeys.default
+
 $setWebhookUrl = $TelegramEndpoint + $TelegramToken + "/setWebhook"
-$functionWebhookUrl = "$($BaseWebhookUrl)?code=$($WebhookKey)"
+$functionWebhookUrl = "$($FunctionUrl)?code=$($functionKey)"
 
 Write-Output "$setWebhookUrl"
 

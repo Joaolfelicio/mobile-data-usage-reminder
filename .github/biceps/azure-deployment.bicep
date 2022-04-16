@@ -164,5 +164,3 @@ resource functionApp 'Microsoft.Web/sites@2020-12-01' = {
 
 output functionAppName string = functionAppName
 output functionBaseUrl string = 'https://${functionAppName}.azurewebsites.net/api'
-#disable-next-line outputs-should-not-contain-secrets
-output functionHostKey string = listkeys('${functionApp.id}/host/default', '2016-08-01').functionKeys.default
