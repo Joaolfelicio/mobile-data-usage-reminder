@@ -14,6 +14,6 @@
         "TelegramApiConfiguration:TelegramUsers:1:ChatId": "",
         "TelegramApiConfiguration:ApiEndPoint": "https://api.telegram.org/bot",
         "TelegramApiConfiguration:AccessToken": "",
-        "TimerSchedule": "0 */15 * * * *"
+        "TimerSchedule": "0 */1 * * * *"
     }
 }

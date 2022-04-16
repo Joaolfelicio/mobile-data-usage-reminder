@@ -47,6 +47,7 @@ public class FunctionStartup : FunctionsStartup
                .AddScoped<IReminderService, ReminderService>()
                .AddScoped<IMobileDataRepository, MobileDataRepository>()
                .AddScoped<IMapperService, MapperService>()
+               .AddScoped<ICommandProcessorBinder, CommandProcessorBinder>()
                .AddScoped<ICheckUsageProcessor, CheckUsageProcessor>();
 
         builder.Services.AddHttpClient<INotificationGateway, TelegramGateway>()

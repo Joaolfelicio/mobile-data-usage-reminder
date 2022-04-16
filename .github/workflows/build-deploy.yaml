@@ -8,6 +8,7 @@ on:
 env:
   AppName: mobiledatausage
   Location: westeurope
+  TelegramEndpoint: https://api.telegram.org/bot
 
 jobs:
   build:
@@ -41,11 +42,12 @@ jobs:
         path: |
           publish
           .github/biceps
+          .github/scripts
         if-no-files-found: error
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: build    
 
     steps:
     - name: Download artifacts
@@ -73,12 +75,29 @@ jobs:
           appNameSuffix=${{ env.AppName }}
           providerEmail=${{ secrets.APPCONFIG_PROVIDEREMAIL }} 
           providerPassword=${{ secrets.APPCONFIG_PROVIDERPASSWORD }}
+          telegramApiEndpoint=${{ env.TelegramEndpoint }}
           telegramUserOnePhoneNumber=${{ secrets.TELEGRAMAPICONFING_TELEGRAMUSERONEPHONENUMBER }}
           telegramUserOneChatId=${{ secrets.TELEGRAMAPICONFING_TELEGRAMUSERONECHATID }}
           telegramUserTwoPhoneNumber=${{ secrets.TELEGRAMAPICONFING_TELEGRAMUSERTWOPHONENUMBER }}
           telegramUserTwoChatId=${{ secrets.TELEGRAMAPICONFING_TELEGRAMUSERTWOCHATID }}
-          telegramAccessToken="${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}"
+          telegramAccessToken=${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
           cronoTimerSchedule="0 */15 * * * *"
+        
+
+    - name: Setup telegram commands
+      run: >
+        ./artifact/.github/scripts/setup-telegram-commands.ps1 
+        ${{ env.TelegramEndpoint }} 
+        ${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
+        .\bot-commands.json
+
+    - name: Setup telegram webhook
+      run: >
+        ./artifact/.github/scripts/setup-telegram-webhook.ps1 
+        ${{ env.TelegramEndpoint }} 
+        ${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }} 
+        "${{ steps.deploy.outputs.functionBaseUrl }}/MobileDataCommandDispatcherFunction" 
+        testKey
 
     - name: Deploy azure functions code
       uses: Azure/functions-action@v1.4.4
