@@ -47,7 +47,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build    
+    needs: build
 
     steps:
     - name: Download artifacts
@@ -89,17 +89,17 @@ jobs:
       with:
         azPSVersion: latest
         inlineScript: >
-          ./artifact/.github/scripts/setup-telegram-webhook.ps1 
-          ${{ env.TelegramEndpoint }} 
-          ${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }} 
+          ./artifact/.github/scripts/setup-telegram-webhook.ps1
+          ${{ env.TelegramEndpoint }}
+          ${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
           "${{ steps.deployinfra.outputs.functionBaseUrl }}/MobileDataCommandDispatcherFunction"
           ${{ steps.deployinfra.outputs.functionAppName }}
 
     - name: Setup MobileDataCommandDispatcherFunction telegram commands
       shell: pwsh
       run: >
-        ./artifact/.github/scripts/setup-telegram-commands.ps1 
-        ${{ env.TelegramEndpoint }} 
+        ./artifact/.github/scripts/setup-telegram-commands.ps1
+        ${{ env.TelegramEndpoint }}
         ${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
         ./artifact/.github/scripts/bot-commands.json
 

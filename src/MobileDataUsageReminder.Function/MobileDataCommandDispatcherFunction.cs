@@ -37,4 +37,3 @@ public class MobileDataCommandDispatcherFunction
         ArgumentNullException.ThrowIfNull(eventPayload?.Message?.From?.Id, "From.Id");
     }
 }
-
