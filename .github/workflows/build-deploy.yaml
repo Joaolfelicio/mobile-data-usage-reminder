@@ -56,7 +56,7 @@ jobs:
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-        enable-AzPSSession: true 
+        enable-AzPSSession: true
 
     - name: Create resource group
       uses: Azure/cli@v1
