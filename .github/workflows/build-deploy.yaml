@@ -82,28 +82,23 @@ jobs:
           telegramUserTwoChatId=${{ secrets.TELEGRAMAPICONFING_TELEGRAMUSERTWOCHATID }}
           telegramAccessToken=${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
           cronoTimerSchedule="0 */15 * * * *"
-        
-    - name: Create GitHub Secret Action
-      uses: gliech/create-github-secret-action@v1.4.10
-      with:
-        name: FUNCTIONKEY
-        value: ${{ steps.deployinfra.outputs.hostKey }}
-        pa_token: ${{ secrets.PA_TOKEN }}
-
-    - name: Setup telegram commands
-      run: >
-        ./artifact/.github/scripts/setup-telegram-commands.ps1 
-        ${{ env.TelegramEndpoint }} 
-        ${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
-        .\bot-commands.json
 
     - name: Setup telegram webhook
+      shell: pwsh
       run: >
         ./artifact/.github/scripts/setup-telegram-webhook.ps1 
         ${{ env.TelegramEndpoint }} 
         ${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }} 
         "${{ steps.deployinfra.outputs.functionBaseUrl }}/MobileDataCommandDispatcherFunction" 
-        ${{ secrets.FUNCTIONKEY }}
+        "::add-mask::${{ steps.deployinfra.outputs.functionHostKey }}"
+
+    - name: Setup telegram commands
+      shell: pwsh
+      run: >
+        ./artifact/.github/scripts/setup-telegram-commands.ps1 
+        ${{ env.TelegramEndpoint }} 
+        ${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
+        .\bot-commands.json
 
     - name: Deploy azure functions code
       uses: Azure/functions-action@v1.4.4
