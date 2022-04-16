@@ -89,8 +89,8 @@ jobs:
         ./artifact/.github/scripts/setup-telegram-webhook.ps1 
         ${{ env.TelegramEndpoint }} 
         ${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }} 
-        "${{ steps.deployinfra.outputs.functionBaseUrl }}/MobileDataCommandDispatcherFunction" 
-        "::add-mask::${{ steps.deployinfra.outputs.functionHostKey }}"
+        "${{ steps.deployinfra.outputs.functionBaseUrl }}/MobileDataCommandDispatcherFunction"
+        (ConvertTo-SecureString ${{ steps.deployinfra.outputs.functionHostKey }} -AsPlainText -Force)
 
     - name: Setup telegram commands
       shell: pwsh
@@ -98,7 +98,7 @@ jobs:
         ./artifact/.github/scripts/setup-telegram-commands.ps1 
         ${{ env.TelegramEndpoint }} 
         ${{ secrets.TELEGRAMAPICONFING_ACCESSTOKEN }}
-        .\bot-commands.json
+        ./artifact/.github/scripts/bot-commands.json
 
     - name: Deploy azure functions code
       uses: Azure/functions-action@v1.4.4

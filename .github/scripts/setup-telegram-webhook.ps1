@@ -2,7 +2,7 @@ param(
     [string]$TelegramEndpoint,
     [string]$TelegramToken,
     [string]$BaseWebhookUrl,
-    [string]$WebhookKey
+    [Security.SecureString]$WebhookKey
 )
 
 $setWebhookUrl = $TelegramEndpoint + $TelegramToken + "/setWebhook"
