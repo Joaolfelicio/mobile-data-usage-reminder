@@ -1,4 +1,4 @@
-using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 public class MobileDataUsageReminderFunction
 {
     private readonly IProviderDataUsageService _providerDataUsage;
+    private readonly IMapperService _mapperService;
     private readonly IReminderService _reminderService;
     private readonly ILogger<MobileDataUsageReminderFunction> _logger;
     private readonly IMobileDataRepository _mobileDataRepository;
@@ -13,32 +14,36 @@ public class MobileDataUsageReminderFunction
 
     public MobileDataUsageReminderFunction(
         IProviderDataUsageService providerDataUsage,
+        IMapperService mapperService,
         IReminderService reminderService,
         ILogger<MobileDataUsageReminderFunction> logger,
         IMobileDataRepository mobileDataRepository,
         IFilterService filterService)
     {
         _providerDataUsage = providerDataUsage;
+        _mapperService = mapperService;
         _reminderService = reminderService;
         _logger = logger;
         _mobileDataRepository = mobileDataRepository;
         _filterService = filterService;
     }
 
-    
+
     //TODO: Add timer as config
     [FunctionName(nameof(MobileDataUsageReminderFunction))]
-    public async Task Run([TimerTrigger("0 */15 * * * *", RunOnStartup = true)] TimerInfo timeTrigger)
+    public async Task Run([TimerTrigger("%TimerSchedule%", RunOnStartup = true)] TimerInfo timer)
     {
-        var mobileData = await _providerDataUsage.GetMobileData();
+        var dataUsage = await _providerDataUsage.GetDataUsage();
+
+        var mobileData = _mapperService.MapMobileDataRoundUpPercent(dataUsage);
 
         var newMobileDatas = _filterService.FilterNewMobileDatas(mobileData);
 
-        if (newMobileDatas.Count > 0)
+        if (newMobileDatas.Any())
         {
-            _logger.LogInformation("There are {count} reminders to be sent.", newMobileDatas.Count);
+            _logger.LogInformation("There are {count} reminders to be sent.", newMobileDatas.Count());
 
-            var reminderTask = _reminderService.SendReminders(newMobileDatas);
+            var reminderTask = _reminderService.SendReminders(newMobileDatas.ToList());
 
             var createDataTask = _mobileDataRepository.CreateMobileData(newMobileDatas);
 

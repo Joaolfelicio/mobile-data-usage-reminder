@@ -7,7 +7,7 @@
         _notificationGateway = notificationGateway;
     }
 
-    public async Task SendReminders(List<MobileData> dataUsages)
+    public async Task SendReminders(IList<MobileData> dataUsages)
     {
         var notificationTasks = new Task[dataUsages.Count];
 

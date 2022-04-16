@@ -9,10 +9,7 @@ param telegramUserOneChatId string
 param telegramUserTwoPhoneNumber string
 param telegramUserTwoChatId string
 param telegramAccessToken string
-param telegramApiEndpoint string = 'https://api.telegram.org/bot'
-
-
-
+param telegramApiEndpoint string
 param cronoTimerSchedule string
 
 var functionAppName = 'fn-${appNameSuffix}'
@@ -166,3 +163,4 @@ resource functionApp 'Microsoft.Web/sites@2020-12-01' = {
 }
 
 output functionAppName string = functionAppName
+output functionBaseUrl string = 'https://${functionAppName}.azurewebsites.net/api'

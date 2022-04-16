@@ -7,7 +7,7 @@ public class MobileData
     public int InitialAmount { get; init; }
     public int UsedAmount { get; init; }
     public int RemainingAmount { get; init; }
-    public int UsedPercentage { get; init; }
+    public double UsedPercentage { get; init; }
     public DateTime FullDate { get; init; }
     public int Day { get; init; }
     public string Month { get; init; }

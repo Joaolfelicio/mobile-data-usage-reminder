@@ -9,7 +9,7 @@ public class MobileDataRepository : IMobileDataRepository
         _mongoCollection = mongoContext.Collection;
     }
 
-    public Task CreateMobileData(List<MobileData> mobileDatas) => _mongoCollection.InsertManyAsync(mobileDatas);
+    public Task CreateMobileData(IEnumerable<MobileData> mobileDatas) => _mongoCollection.InsertManyAsync(mobileDatas);
 
 
     public bool WasReminderAlreadySent(MobileData mobileData) =>
